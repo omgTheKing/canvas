@@ -98,7 +98,7 @@
                     <div class="card-body">
                         <div class="col-12">
                             <div class="form-group row">
-                                <label for="name" class="font-weight-bold text-uppercase text-muted small">
+                                <label for="User" class="font-weight-bold text-uppercase text-muted small">
                                     {{ trans.name }}
                                 </label>
                                 <input

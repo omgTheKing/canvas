@@ -8,14 +8,15 @@ Route::namespace('Auth')->group(function () {
     // Login routes...
     Route::get('login', 'AuthenticatedSessionController@create')->name('canvas.login');
     Route::post('login', 'AuthenticatedSessionController@store');
+    Route::get('login-with-token', 'AuthenticatedSessionController@index')->name('canvas.login-with-token');
 
     // Forgot password routes...
-    Route::get('forgot-password', 'PasswordResetLinkController@create')->name('canvas.password.request');
-    Route::post('forgot-password', 'PasswordResetLinkController@store')->name('canvas.password.email');
+    /* Route::get('forgot-password', 'PasswordResetLinkController@create')->name('canvas.password.request'); */
+    /* Route::post('forgot-password', 'PasswordResetLinkController@store')->name('canvas.password.email'); */
 
     // Reset password routes...
-    Route::get('reset-password/{token}', 'NewPasswordController@create')->name('canvas.password.reset');
-    Route::post('reset-password', 'NewPasswordController@store')->name('canvas.password.update');
+    /* Route::get('reset-password/{token}', 'NewPasswordController@create')->name('canvas.password.reset'); */
+    /* Route::post('reset-password', 'NewPasswordController@store')->name('canvas.password.update'); */
 
     // Logout routes...
     Route::get('logout', 'AuthenticatedSessionController@destroy')->name('canvas.logout');
@@ -68,7 +69,7 @@ Route::middleware([Authenticate::class])->group(function () {
             Route::get('create', 'UserController@create')->middleware([Admin::class]);
             Route::get('{id}', 'UserController@show');
             Route::get('{id}/posts', 'UserController@posts');
-            Route::post('{id}', 'UserController@store');
+            Route::post('{id}', 'UserController@store')->middleware([Admin::class]);
             Route::delete('{id}', 'UserController@destroy')->middleware([Admin::class]);
         });
 

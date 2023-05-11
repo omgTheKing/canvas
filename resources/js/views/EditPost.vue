@@ -16,7 +16,7 @@
                 </ul>
             </template>
 
-            <template slot="options">
+            <template slot="options" v-if="isEditor || !isPublished(post.published_at)">
                 <div class="dropdown">
                     <a
                         id="navbarDropdown"
@@ -41,7 +41,7 @@
                         </svg>
                     </a>
 
-                    <div class="dropdown-menu dropdown-menu-right">
+                    <div class="dropdown-menu dropdown-menu-right" v-if="isEditor || !isPublished(post.published_at)">
                         <router-link
                             v-if="isPublished(post.published_at)"
                             :to="{ name: 'post-stats', params: { id: uri } }"
@@ -64,14 +64,19 @@
                         </a>
                         <a href="#" class="dropdown-item" @click="showSeoModal"> {{ trans.seo_settings }} </a>
                         <a
-                            v-if="isPublished(post.published_at)"
+                            v-if="isPublished(post.published_at) && isEditor"
                             href="#"
                             class="dropdown-item"
                             @click.prevent="convertToDraft"
                         >
                             {{ trans.convert_to_draft }}
                         </a>
-                        <a v-if="!creatingPost" href="#" class="dropdown-item text-danger" @click="showDeleteModal">
+                        <a
+                            v-if="!creatingPost && (isEditor || !isPublished(post.published_at))"
+                            href="#"
+                            class="dropdown-item text-danger"
+                            @click="showDeleteModal"
+                        >
                             {{ trans.delete }}
                         </a>
                     </div>

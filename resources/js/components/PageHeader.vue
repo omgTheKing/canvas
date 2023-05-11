@@ -46,12 +46,6 @@
 
                         <div class="dropdown-divider" />
 
-                        <router-link
-                            :to="{ name: 'edit-user', params: { id: settings.user.id } }"
-                            class="dropdown-item"
-                        >
-                            {{ trans.your_profile }}
-                        </router-link>
                         <router-link :to="{ name: 'posts' }" class="dropdown-item">
                             <span>{{ trans.posts }}</span>
                         </router-link>

@@ -118,7 +118,7 @@ export default [
         name: 'edit-user',
         component: EditUser,
         beforeEnter: (to, from, next) => {
-            if (isAdmin || settings.state.user.id == to.params.id) {
+            if (isAdmin) {
                 next();
             } else {
                 next({ name: 'home' });
