@@ -96,9 +96,10 @@ class PostController extends Controller
     public function store(PostRequest $request, $id): JsonResponse
     {
         $data = $request->validated();
+        $user = $request->user('canvas');
 
         $post = Post::query()
-                    ->when($request->user('canvas')->isContributor, function (Builder $query) {
+                    ->when($user->isContributor, function (Builder $query) {
                         return $query->where('user_id', request()->user('canvas')->id);
                     }, function (Builder $query) {
                         return $query;
@@ -106,6 +107,10 @@ class PostController extends Controller
                     ->with('tags', 'topic')
                     ->find($id);
 
+        // Contributorlar yayinlanan postlari artik guncelleyemezler.
+        if ($post !== null && $post->published_at !== null && $user->isContributor) {
+            return response()->json($post->refresh(), 403);
+        }
         if (! $post) {
             $post = new Post(['id' => $id]);
         }

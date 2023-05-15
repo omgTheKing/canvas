@@ -133,6 +133,10 @@ export default {
             type: Object,
             required: true,
         },
+        disabled: {
+            type: Boolean,
+            required: true,
+        },
     },
 
     data() {
@@ -183,6 +187,7 @@ export default {
                 scrollingContainer: 'html, body',
                 placeholder: this.trans.tell_your_story,
             });
+            quill.enable(!this.disabled);
 
             /**
              * Temporary workaround for customizing the link tooltip.
@@ -203,6 +208,9 @@ export default {
 
         handleClicksInsideEditor() {
             this.editor.root.addEventListener('click', (event) => {
+                if (this.disabled) {
+                    return;
+                }
                 let blot = Parchment.find(event.target, true);
 
                 if (blot instanceof EmbedImageBlot) {
@@ -261,6 +269,9 @@ export default {
         },
 
         toggleSidebarControls() {
+            if (this.disabled) {
+                return;
+            }
             this.editor.focus();
 
             if (this.$refs.sidebarControls.classList.contains('active')) {

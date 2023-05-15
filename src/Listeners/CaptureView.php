@@ -5,6 +5,7 @@ namespace Canvas\Listeners;
 use Canvas\Canvas;
 use Canvas\Events\PostViewed;
 use Canvas\Models\Post;
+use Illuminate\Support\Facades\Cache;
 
 class CaptureView
 {
@@ -32,6 +33,10 @@ class CaptureView
         }
     }
 
+    private function cacheKey(Post $post): string {
+        return 'canvas_post_view:'. md5(request()->ip() . $post->id);
+    }
+
     /**
      * Check if a given post exists in the session.
      *
@@ -40,9 +45,7 @@ class CaptureView
      */
     private function wasRecentlyViewed(Post $post): bool
     {
-        $viewed = session()->get('viewed_posts', []);
-
-        return array_key_exists($post->id, $viewed);
+        return Cache::has($this->cacheKey($post));
     }
 
     /**
@@ -53,6 +56,6 @@ class CaptureView
      */
     private function storeInSession(Post $post): void
     {
-        session()->put("viewed_posts.{$post->id}", now()->timestamp);
+        Cache::put($this->cacheKey($post), 1, now()->addDay());
     }
 }

@@ -16,7 +16,7 @@
                 </ul>
             </template>
 
-            <template slot="options" v-if="isEditor || !isPublished(post.published_at)">
+            <template slot="options" v-if="isEditor || isAdmin || !isPublished(post.published_at)">
                 <div class="dropdown">
                     <a
                         id="navbarDropdown"
@@ -41,7 +41,10 @@
                         </svg>
                     </a>
 
-                    <div class="dropdown-menu dropdown-menu-right" v-if="isEditor || !isPublished(post.published_at)">
+                    <div
+                        class="dropdown-menu dropdown-menu-right"
+                        v-if="isEditor || isAdmin || !isPublished(post.published_at)"
+                    >
                         <router-link
                             v-if="isPublished(post.published_at)"
                             :to="{ name: 'post-stats', params: { id: uri } }"
@@ -64,7 +67,7 @@
                         </a>
                         <a href="#" class="dropdown-item" @click="showSeoModal"> {{ trans.seo_settings }} </a>
                         <a
-                            v-if="isPublished(post.published_at) && isEditor"
+                            v-if="isPublished(post.published_at) && (isEditor || isAdmin)"
                             href="#"
                             class="dropdown-item"
                             @click.prevent="convertToDraft"
@@ -72,7 +75,7 @@
                             {{ trans.convert_to_draft }}
                         </a>
                         <a
-                            v-if="!creatingPost && (isEditor || !isPublished(post.published_at))"
+                            v-if="!creatingPost && (isEditor || isAdmin || !isPublished(post.published_at))"
                             href="#"
                             class="dropdown-item text-danger"
                             @click="showDeleteModal"
@@ -86,7 +89,10 @@
 
         <main v-if="isReady" class="py-4">
             <div class="col-xl-8 offset-xl-2 col-lg-10 offset-lg-1 col-md-12">
-                <div class="form-group my-3">
+                <div class="form-group my-3" v-if="editDisabled">
+                    <p class="alert alert-danger w-100">Bu gönderi yayınlandığı için düzenleyemezsiniz!</p>
+                </div>
+                <div class="form-group my-3" v-if="!editDisabled">
                     <textarea-autosize
                         v-model="post.title"
                         :placeholder="trans.title"
@@ -96,9 +102,18 @@
                         @input.native="updatePost"
                     />
                 </div>
+                <div class="form-group my-3" v-else>
+                    <h1
+                        style="font-size: 42px"
+                        class="w-100 form-control-lg border-0 font-serif bg-transparent px-0"
+                        rows="1"
+                    >
+                        {{ post.title }}
+                    </h1>
+                </div>
 
                 <div class="form-group my-2">
-                    <quill-editor :key="post.id" :post="post" @update-post="savePost" />
+                    <quill-editor :key="post.id" :post="post" :disabled="editDisabled" @update-post="savePost" />
                 </div>
             </div>
         </main>
@@ -203,6 +218,7 @@ export default {
             isSaved: false,
             errors: [],
             isReady: false,
+            editDisabled: true,
         };
     },
 
@@ -211,6 +227,7 @@ export default {
             trans: 'settings/trans',
             isAdmin: 'settings/isAdmin',
             isEditor: 'settings/isEditor',
+            isContributor: 'settings/isContributor',
         }),
 
         creatingPost() {
@@ -261,6 +278,7 @@ export default {
 
                     this.tags = get(data, 'tags', []);
                     this.topics = get(data, 'topics', []);
+                    this.editDisabled = this.isContributor && this.post.published_at !== null;
 
                     NProgress.inc();
                 })

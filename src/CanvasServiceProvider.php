@@ -10,7 +10,6 @@ use Canvas\Console\UiCommand;
 use Canvas\Console\UserCommand;
 use Canvas\Events\PostViewed;
 use Canvas\Listeners\CaptureView;
-use Canvas\Listeners\CaptureVisit;
 use Canvas\Models\User;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Events\Dispatcher;
@@ -60,7 +59,6 @@ class CanvasServiceProvider extends ServiceProvider
         $mappings = [
             PostViewed::class => [
                 CaptureView::class,
-                CaptureVisit::class,
             ],
         ];
 
