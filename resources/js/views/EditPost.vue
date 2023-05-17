@@ -278,7 +278,7 @@ export default {
 
                     this.tags = get(data, 'tags', []);
                     this.topics = get(data, 'topics', []);
-                    this.editDisabled = this.isContributor && this.post.published_at !== null;
+                    this.editDisabled = this.isContributor && !!this.post.published_at;
 
                     NProgress.inc();
                 })

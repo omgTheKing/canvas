@@ -69,7 +69,7 @@ Route::middleware([Authenticate::class])->group(function () {
             Route::get('create', 'UserController@create')->middleware([Admin::class]);
             Route::get('{id}', 'UserController@show');
             Route::get('{id}/posts', 'UserController@posts');
-            Route::post('{id}', 'UserController@store')->middleware([Admin::class]);
+            Route::post('{id}', 'UserController@store');
             Route::delete('{id}', 'UserController@destroy')->middleware([Admin::class]);
         });
 

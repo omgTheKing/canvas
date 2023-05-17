@@ -53,10 +53,14 @@ class UserController extends Controller
     public function store(UserRequest $request, $id): JsonResponse
     {
         $data = $request->validated();
+        $requestUser = $request->user('canvas');
 
         $user = User::query()->find($id);
 
         if (! $user) {
+            if (!$requestUser?->isAdmin) {
+                abort(403, 'unauthorized');
+            }
             if ($user = User::onlyTrashed()->firstWhere('email', $data['email'])) {
                 $user->restore();
 
@@ -75,11 +79,8 @@ class UserController extends Controller
             $data['locale'] = config('app.fallback_locale');
         }
 
+        unset($data['name'], $data['email'], $data['username'], $data['password'], $data['password_confirmation'], $data['summary']);
         $user->fill($data);
-
-        if (Arr::has($data, 'password')) {
-            $user->password = Hash::make($data['password']);
-        }
 
         $user->save();
 
