@@ -12,7 +12,7 @@ class Visit extends Model
      *
      * @var string
      */
-    protected $table = 'canvas_visits';
+    protected $table = 'blog_visits';
 
     /**
      * The attributes that aren't mass assignable.

@@ -21,7 +21,7 @@ class InstallCommandTest extends TestCase
              ->assertExitCode(0)
              ->expectsOutput('Installation complete.');
 
-        $this->assertDatabaseHas('canvas_users', [
+        $this->assertDatabaseHas('blog_users', [
             'email' => 'email@example.com',
             'role' => User::ADMIN,
         ]);

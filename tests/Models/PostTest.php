@@ -54,7 +54,7 @@ class PostTest extends TestCase
         ]);
         $response = $this->actingAs($this->admin, 'canvas')->postJson("/canvas/api/posts/{$primaryPost->id}", $data);
 
-        $this->assertDatabaseHas('canvas_posts', [
+        $this->assertDatabaseHas('blog_posts', [
             'id' => $response->original['id'],
             'slug' => $response->original['slug'],
             'user_id' => $response->original['user_id'],
@@ -65,7 +65,7 @@ class PostTest extends TestCase
         ]);
         $response = $this->actingAs($this->editor, 'canvas')->postJson("/canvas/api/posts/{$secondaryPost->id}", $data);
 
-        $this->assertDatabaseHas('canvas_posts', [
+        $this->assertDatabaseHas('blog_posts', [
             'id' => $response->original['id'],
             'slug' => $response->original['slug'],
             'user_id' => $response->original['user_id'],
@@ -161,11 +161,11 @@ class PostTest extends TestCase
 
         $this->assertEquals(0, $post->tags->count());
         $this->assertEquals(0, $post->topic->count());
-        $this->assertDatabaseMissing('canvas_posts_tags', [
+        $this->assertDatabaseMissing('blog_posts_tags', [
             'post_id' => $post->id,
             'tag_id' => $tag->id,
         ]);
-        $this->assertDatabaseMissing('canvas_posts_topics', [
+        $this->assertDatabaseMissing('blog_posts_topics', [
             'post_id' => $post->id,
             'topic_id' => $topic->id,
         ]);

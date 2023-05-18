@@ -253,7 +253,7 @@ class UserControllerTest extends TestCase
              ->assertSuccessful()
              ->assertNoContent();
 
-        $this->assertSoftDeleted('canvas_users', [
+        $this->assertSoftDeleted('blog_users', [
             'id' => $user->id,
             'email' => $user->email,
         ]);

@@ -174,7 +174,7 @@ class TagControllerTest extends TestCase
              ->assertSuccessful()
              ->assertNoContent();
 
-        $this->assertSoftDeleted('canvas_tags', [
+        $this->assertSoftDeleted('blog_tags', [
             'id' => $tag->id,
             'slug' => $tag->slug,
         ]);
@@ -187,7 +187,7 @@ class TagControllerTest extends TestCase
 
         $tag->posts()->sync([$post->id]);
 
-        $this->assertDatabaseHas('canvas_posts_tags', [
+        $this->assertDatabaseHas('blog_posts_tags', [
             'post_id' => $post->id,
             'tag_id' => $tag->id,
         ]);
@@ -199,12 +199,12 @@ class TagControllerTest extends TestCase
              ->assertSuccessful()
              ->assertNoContent();
 
-        $this->assertSoftDeleted('canvas_posts', [
+        $this->assertSoftDeleted('blog_posts', [
             'id' => $post->id,
             'slug' => $post->slug,
         ]);
 
-        $this->assertDatabaseMissing('canvas_posts_tags', [
+        $this->assertDatabaseMissing('blog_posts_tags', [
             'post_id' => $post->id,
             'tag_id' => $tag->id,
         ]);

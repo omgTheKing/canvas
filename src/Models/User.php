@@ -37,7 +37,7 @@ class User extends Authenticatable
      *
      * @var string
      */
-    protected $table = 'canvas_users';
+    protected $table = 'blog_users';
 
     /**
      * The attributes that aren't mass assignable.

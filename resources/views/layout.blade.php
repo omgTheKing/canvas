@@ -28,7 +28,7 @@
 @if(!\Canvas\Canvas::assetsUpToDate())
     <div class="alert alert-danger border-0 text-center rounded-0 mb-0">
         {{ trans('canvas::app.assets_are_not_up_to_date') }}
-        {{ trans('canvas::app.to_update_run') }}<br/><code>php artisan canvas:publish</code>
+        {{ trans('canvas::app.to_update_run') }}<br/><code>php artisan blog:publish</code>
     </div>
 @endif
 

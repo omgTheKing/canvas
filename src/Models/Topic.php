@@ -16,7 +16,7 @@ class Topic extends Model
      *
      * @var string
      */
-    protected $table = 'canvas_topics';
+    protected $table = 'blog_topics';
 
     /**
      * The attributes that aren't mass assignable.
@@ -62,7 +62,7 @@ class Topic extends Model
     {
         // TODO: This should be a hasMany() relationship?
 
-        return $this->belongsToMany(Post::class, 'canvas_posts_topics', 'topic_id', 'post_id');
+        return $this->belongsToMany(Post::class, 'blog_posts_topics', 'topic_id', 'post_id');
     }
 
     /**

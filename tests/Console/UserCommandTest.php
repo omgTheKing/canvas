@@ -17,32 +17,32 @@ class UserCommandTest extends TestCase
 
     public function testCanvasUserCommandWillValidateAnEmptyEmail(): void
     {
-        $this->artisan('canvas:user admin')
+        $this->artisan('blog:user admin')
              ->assertExitCode(0)
              ->expectsOutput('Please enter a valid email.');
     }
 
     public function testCanvasUserCommandWillValidateAnInvalidEmail(): void
     {
-        $this->artisan('canvas:user admin --email bad.email')
+        $this->artisan('blog:user admin --email bad.email')
              ->assertExitCode(0)
              ->expectsOutput('Please enter a valid email.');
     }
 
     public function testCanvasUserCommandWillValidateAnInvalidRole(): void
     {
-        $this->artisan('canvas:user ad --email email@example.com')
+        $this->artisan('blog:user ad --email email@example.com')
              ->assertExitCode(0)
              ->expectsOutput('Please enter a valid role.');
     }
 
     public function testCanvasUserCommandCanCreateANewContributor(): void
     {
-        $this->artisan('canvas:user contributor --email contributor@example.com')
+        $this->artisan('blog:user contributor --email contributor@example.com')
              ->assertExitCode(0)
              ->expectsOutput('New user created.');
 
-        $this->assertDatabaseHas('canvas_users', [
+        $this->assertDatabaseHas('blog_users', [
             'email' => 'contributor@example.com',
             'role' => User::CONTRIBUTOR,
         ]);
@@ -50,11 +50,11 @@ class UserCommandTest extends TestCase
 
     public function testCanvasUserCommandCanCreateANewEditor(): void
     {
-        $this->artisan('canvas:user editor --email editor@example.com')
+        $this->artisan('blog:user editor --email editor@example.com')
              ->assertExitCode(0)
              ->expectsOutput('New user created.');
 
-        $this->assertDatabaseHas('canvas_users', [
+        $this->assertDatabaseHas('blog_users', [
             'email' => 'editor@example.com',
             'role' => User::EDITOR,
         ]);
@@ -62,11 +62,11 @@ class UserCommandTest extends TestCase
 
     public function testCanvasUserCommandCanCreateANewAdmin(): void
     {
-        $this->artisan('canvas:user admin --email admin@example.com')
+        $this->artisan('blog:user admin --email admin@example.com')
              ->assertExitCode(0)
              ->expectsOutput('New user created.');
 
-        $this->assertDatabaseHas('canvas_users', [
+        $this->assertDatabaseHas('blog_users', [
             'email' => 'admin@example.com',
             'role' => User::ADMIN,
         ]);

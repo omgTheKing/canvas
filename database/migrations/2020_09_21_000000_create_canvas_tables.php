@@ -13,13 +13,15 @@ class CreateCanvasTables extends Migration
      */
     public function up()
     {
-        Schema::create('canvas_posts', function (Blueprint $table) {
+        Schema::create('blog_posts', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('slug');
             $table->string('title');
             $table->text('summary')->nullable();
             $table->text('body')->nullable();
-            $table->dateTime('published_at')->nullable();
+            $table->dateTime('published_at')->nullable()->comment('yayına sunduğu tarih');
+            $table->dateTime('approved_at')->nullable()->comment('editör yayınladığı tarih');
+            $table->uuid('approved_by')->nullable()->index();
             $table->string('featured_image')->nullable();
             $table->string('featured_image_caption')->nullable();
             $table->uuid('user_id')->index();
@@ -29,7 +31,7 @@ class CreateCanvasTables extends Migration
             $table->unique(['slug', 'user_id']);
         });
 
-        Schema::create('canvas_tags', function (Blueprint $table) {
+        Schema::create('blog_tags', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('slug');
             $table->string('name');
@@ -40,7 +42,7 @@ class CreateCanvasTables extends Migration
             $table->unique(['slug', 'user_id']);
         });
 
-        Schema::create('canvas_topics', function (Blueprint $table) {
+        Schema::create('blog_topics', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('slug');
             $table->string('name');
@@ -51,19 +53,19 @@ class CreateCanvasTables extends Migration
             $table->unique(['slug', 'user_id']);
         });
 
-        Schema::create('canvas_posts_tags', function (Blueprint $table) {
+        Schema::create('blog_posts_tags', function (Blueprint $table) {
             $table->uuid('post_id');
             $table->uuid('tag_id');
             $table->unique(['post_id', 'tag_id']);
         });
 
-        Schema::create('canvas_posts_topics', function (Blueprint $table) {
+        Schema::create('blog_posts_topics', function (Blueprint $table) {
             $table->uuid('post_id');
             $table->uuid('topic_id');
             $table->unique(['post_id', 'topic_id']);
         });
 
-        Schema::create('canvas_views', function (Blueprint $table) {
+        Schema::create('blog_views', function (Blueprint $table) {
             $table->increments('id');
             $table->uuid('post_id')->index();
             $table->string('ip')->nullable();
@@ -73,7 +75,7 @@ class CreateCanvasTables extends Migration
             $table->index('created_at');
         });
 
-        Schema::create('canvas_visits', function (Blueprint $table) {
+        Schema::create('blog_visits', function (Blueprint $table) {
             $table->increments('id');
             $table->uuid('post_id');
             $table->string('ip')->nullable();
@@ -82,7 +84,7 @@ class CreateCanvasTables extends Migration
             $table->timestamps();
         });
 
-        Schema::create('canvas_users', function (Blueprint $table) {
+        Schema::create('blog_users', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name');
             $table->string('email')->unique();
@@ -107,13 +109,13 @@ class CreateCanvasTables extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('canvas_posts');
-        Schema::dropIfExists('canvas_tags');
-        Schema::dropIfExists('canvas_topics');
-        Schema::dropIfExists('canvas_posts_tags');
-        Schema::dropIfExists('canvas_posts_topics');
-        Schema::dropIfExists('canvas_views');
-        Schema::dropIfExists('canvas_visits');
-        Schema::dropIfExists('canvas_users');
+        Schema::dropIfExists('blog_posts');
+        Schema::dropIfExists('blog_tags');
+        Schema::dropIfExists('blog_topics');
+        Schema::dropIfExists('blog_posts_tags');
+        Schema::dropIfExists('blog_posts_topics');
+        Schema::dropIfExists('blog_views');
+        Schema::dropIfExists('blog_visits');
+        Schema::dropIfExists('blog_users');
     }
 }

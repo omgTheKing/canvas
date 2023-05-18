@@ -100,14 +100,14 @@ abstract class TestCase extends OrchestraTestCase
             'prefix' => '',
         ]);
 
-        $config->set('auth.providers.canvas_users', [
+        $config->set('auth.providers.blog_users', [
             'driver' => 'eloquent',
             'model' => User::class,
         ]);
 
         $config->set('auth.guards.canvas', [
             'driver' => 'session',
-            'provider' => 'canvas_users',
+            'provider' => 'blog_users',
         ]);
     }
 

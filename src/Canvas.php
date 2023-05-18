@@ -80,7 +80,7 @@ class Canvas
         $message = sprintf('%s%s.  %s',
             trans('canvas::app.assets_are_not_up_to_date'),
             trans('canvas::app.to_update_run'),
-            'php artisan canvas:publish'
+            'php artisan blog:publish'
         );
 
         if (! File::exists($path)) {

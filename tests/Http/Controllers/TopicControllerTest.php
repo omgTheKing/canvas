@@ -174,7 +174,7 @@ class TopicControllerTest extends TestCase
              ->assertSuccessful()
              ->assertNoContent();
 
-        $this->assertSoftDeleted('canvas_topics', [
+        $this->assertSoftDeleted('blog_topics', [
             'id' => $topic->id,
             'slug' => $topic->slug,
         ]);
@@ -187,7 +187,7 @@ class TopicControllerTest extends TestCase
 
         $topic->posts()->sync([$post->id]);
 
-        $this->assertDatabaseHas('canvas_posts_topics', [
+        $this->assertDatabaseHas('blog_posts_topics', [
             'post_id' => $post->id,
             'topic_id' => $topic->id,
         ]);
@@ -199,12 +199,12 @@ class TopicControllerTest extends TestCase
              ->assertSuccessful()
              ->assertNoContent();
 
-        $this->assertSoftDeleted('canvas_posts', [
+        $this->assertSoftDeleted('blog_posts', [
             'id' => $post->id,
             'slug' => $post->slug,
         ]);
 
-        $this->assertDatabaseMissing('canvas_posts_topics', [
+        $this->assertDatabaseMissing('blog_posts_topics', [
             'post_id' => $post->id,
             'topic_id' => $topic->id,
         ]);

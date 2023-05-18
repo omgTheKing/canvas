@@ -12,7 +12,7 @@ class View extends Model
      *
      * @var string
      */
-    protected $table = 'canvas_views';
+    protected $table = 'blog_views';
 
     /**
      * The attributes that aren't mass assignable.

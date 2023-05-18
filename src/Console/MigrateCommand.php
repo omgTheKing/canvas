@@ -11,7 +11,7 @@ class MigrateCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'canvas:migrate { --force : Force the operation to run when in production }';
+    protected $signature = 'blog:migrate { --force : Force the operation to run when in production }';
 
     /**
      * The console command description.

@@ -31,7 +31,7 @@ class TagTest extends TestCase
         ]);
         $response = $this->actingAs($this->admin, 'canvas')->postJson("/canvas/api/tags/{$primaryTag->id}", $data);
 
-        $this->assertDatabaseHas('canvas_tags', [
+        $this->assertDatabaseHas('blog_tags', [
             'id' => $response->original['id'],
             'slug' => $response->original['slug'],
             'user_id' => $response->original['user_id'],
@@ -46,7 +46,7 @@ class TagTest extends TestCase
 
         $response = $this->actingAs($secondaryAdmin, 'canvas')->postJson("/canvas/api/tags/{$secondaryTag->id}", $data);
 
-        $this->assertDatabaseHas('canvas_tags', [
+        $this->assertDatabaseHas('blog_tags', [
             'id' => $response->original['id'],
             'slug' => $response->original['slug'],
             'user_id' => $response->original['user_id'],
@@ -83,7 +83,7 @@ class TagTest extends TestCase
         $tag->delete();
 
         $this->assertEquals(0, $tag->posts->count());
-        $this->assertDatabaseMissing('canvas_posts_tags', [
+        $this->assertDatabaseMissing('blog_posts_tags', [
             'post_id' => $post->id,
             'tag_id' => $tag->id,
         ]);

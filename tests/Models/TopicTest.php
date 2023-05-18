@@ -32,7 +32,7 @@ class TopicTest extends TestCase
         ]);
         $response = $this->actingAs($this->admin, 'canvas')->postJson("/canvas/api/topics/{$primaryTopic->id}", $data);
 
-        $this->assertDatabaseHas('canvas_topics', [
+        $this->assertDatabaseHas('blog_topics', [
             'id' => $response->original['id'],
             'slug' => $response->original['slug'],
             'user_id' => $response->original['user_id'],
@@ -47,7 +47,7 @@ class TopicTest extends TestCase
 
         $response = $this->actingAs($secondaryAdmin, 'canvas')->postJson("/canvas/api/topics/{$secondaryTopic->id}", $data);
 
-        $this->assertDatabaseHas('canvas_topics', [
+        $this->assertDatabaseHas('blog_topics', [
             'id' => $response->original['id'],
             'slug' => $response->original['slug'],
             'user_id' => $response->original['user_id'],
@@ -84,7 +84,7 @@ class TopicTest extends TestCase
         $topic->delete();
 
         $this->assertEquals(0, $topic->posts->count());
-        $this->assertDatabaseMissing('canvas_posts_topics', [
+        $this->assertDatabaseMissing('blog_posts_topics', [
             'post_id' => $post->id,
             'topic_id' => $topic->id,
         ]);

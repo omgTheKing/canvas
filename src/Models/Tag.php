@@ -16,7 +16,7 @@ class Tag extends Model
      *
      * @var string
      */
-    protected $table = 'canvas_tags';
+    protected $table = 'blog_tags';
 
     /**
      * The attributes that aren't mass assignable.
@@ -60,7 +60,7 @@ class Tag extends Model
      */
     public function posts(): BelongsToMany
     {
-        return $this->belongsToMany(Post::class, 'canvas_posts_tags', 'tag_id', 'post_id');
+        return $this->belongsToMany(Post::class, 'blog_posts_tags', 'tag_id', 'post_id');
     }
 
     /**

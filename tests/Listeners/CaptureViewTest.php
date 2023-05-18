@@ -27,7 +27,7 @@ class CaptureViewTest extends TestCase
 
         $listener->handle($event);
 
-        $this->assertDatabaseHas('canvas_views', [
+        $this->assertDatabaseHas('blog_views', [
             'post_id' => $post->id,
         ]);
 
@@ -45,7 +45,7 @@ class CaptureViewTest extends TestCase
         $listener->handle($event);
         $listener->handle($event);
 
-        $this->assertDatabaseHas('canvas_views', [
+        $this->assertDatabaseHas('blog_views', [
             'post_id' => $post->id,
         ]);
 

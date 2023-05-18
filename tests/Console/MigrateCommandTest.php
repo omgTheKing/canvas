@@ -16,7 +16,7 @@ class MigrateCommandTest extends TestCase
 
     public function testCanvasMigrationCommand(): void
     {
-        $this->artisan('canvas:migrate')
+        $this->artisan('blog:migrate')
              ->assertExitCode(0)
              ->expectsOutput('Migration complete.');
     }

@@ -19,7 +19,7 @@ class Post extends Model
      *
      * @var string
      */
-    protected $table = 'canvas_posts';
+    protected $table = 'blog_posts';
 
     /**
      * The attributes that aren't mass assignable.
@@ -72,6 +72,7 @@ class Post extends Model
      */
     protected $casts = [
         'published_at' => 'datetime:Y-m-d',
+        'approved_at' => 'datetime:Y-m-d',
         'meta' => 'array',
     ];
 
@@ -84,7 +85,7 @@ class Post extends Model
     {
         return $this->belongsToMany(
             Tag::class,
-            'canvas_posts_tags',
+            'blog_posts_tags',
             'post_id',
             'tag_id'
         );
@@ -101,7 +102,7 @@ class Post extends Model
 
         return $this->belongsToMany(
             Topic::class,
-            'canvas_posts_topics',
+            'blog_posts_topics',
             'post_id',
             'topic_id'
         );
@@ -115,6 +116,16 @@ class Post extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get the approver user relationship.
+     *
+     * @return BelongsTo
+     */
+    public function approver(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'approved_by');
     }
 
     /**
@@ -179,6 +190,17 @@ class Post extends Model
     public function scopePublished(Builder $query): Builder
     {
         return $query->where('published_at', '<=', now()->toDateTimeString());
+    }
+
+    /**
+     * Scope a query to only include approved posts.
+     *
+     * @param  Builder  $query
+     * @return Builder
+     */
+    public function scopeApproved(Builder $query): Builder
+    {
+        return $query->where('approved_at', '<=', now()->toDateTimeString());
     }
 
     /**

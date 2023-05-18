@@ -48,7 +48,7 @@ class InstallCommand extends Command
         $this->callSilent('vendor:publish', ['--tag' => 'canvas-provider']);
         $this->callSilent('vendor:publish', ['--tag' => 'canvas-assets']);
         $this->callSilent('vendor:publish', ['--tag' => 'canvas-config']);
-        $this->callSilent('canvas:migrate');
+        $this->callSilent('blog:migrate');
 
         if (! app()->runningUnitTests()) {
             $this->installCanvasServiceProvider();

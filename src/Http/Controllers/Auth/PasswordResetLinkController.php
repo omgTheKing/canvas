@@ -37,7 +37,7 @@ class PasswordResetLinkController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'email' => 'required|email|exists:canvas_users',
+            'email' => 'required|email|exists:blog_users',
         ]);
 
         $user = User::firstWhere('email', $request->email);

@@ -15,7 +15,7 @@ class UserCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'canvas:user
+    protected $signature = 'blog:user
                     { role : The role to be assigned (admin, editor, contributor) }
                     { --email= : Email associated with the user }';
 

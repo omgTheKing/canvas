@@ -505,7 +505,7 @@ class PostControllerTest extends TestCase
              ]);
 
         $this->assertCount(2, $post->tags);
-        $this->assertDatabaseHas('canvas_posts_tags', [
+        $this->assertDatabaseHas('blog_posts_tags', [
             'post_id' => $post->id,
         ]);
     }
@@ -536,7 +536,7 @@ class PostControllerTest extends TestCase
              ]);
 
         $this->assertCount(1, $post->tags);
-        $this->assertDatabaseHas('canvas_posts_tags', [
+        $this->assertDatabaseHas('blog_posts_tags', [
             'post_id' => $post->id,
             'tag_id' => $tag->id,
         ]);
@@ -567,7 +567,7 @@ class PostControllerTest extends TestCase
              ]);
 
         $this->assertCount(1, $post->topic);
-        $this->assertDatabaseHas('canvas_posts_topics', [
+        $this->assertDatabaseHas('blog_posts_topics', [
             'post_id' => $post->id,
         ]);
     }
@@ -598,7 +598,7 @@ class PostControllerTest extends TestCase
              ]);
 
         $this->assertCount(1, $post->topic);
-        $this->assertDatabaseHas('canvas_posts_topics', [
+        $this->assertDatabaseHas('blog_posts_topics', [
             'post_id' => $post->id,
             'topic_id' => $topic->id,
         ]);
@@ -640,7 +640,7 @@ class PostControllerTest extends TestCase
              ->assertSuccessful()
              ->assertNoContent();
 
-        $this->assertSoftDeleted('canvas_posts', [
+        $this->assertSoftDeleted('blog_posts', [
             'id' => $post->id,
             'slug' => $post->slug,
         ]);
@@ -656,7 +656,7 @@ class PostControllerTest extends TestCase
         $tag = factory(Tag::class)->create();
         $post->tags()->sync([$tag->id]);
 
-        $this->assertDatabaseHas('canvas_posts_tags', [
+        $this->assertDatabaseHas('blog_posts_tags', [
             'post_id' => $post->id,
             'tag_id' => $tag->id,
         ]);
@@ -667,7 +667,7 @@ class PostControllerTest extends TestCase
         $post->topic()->sync([$topic->id]);
         $this->assertCount(1, $post->topic);
 
-        $this->assertDatabaseHas('canvas_posts_topics', [
+        $this->assertDatabaseHas('blog_posts_topics', [
             'post_id' => $post->id,
             'topic_id' => $topic->id,
         ]);
@@ -677,17 +677,17 @@ class PostControllerTest extends TestCase
              ->assertSuccessful()
              ->assertNoContent();
 
-        $this->assertSoftDeleted('canvas_posts', [
+        $this->assertSoftDeleted('blog_posts', [
             'id' => $post->id,
             'slug' => $post->slug,
         ]);
 
-        $this->assertDatabaseMissing('canvas_posts_tags', [
+        $this->assertDatabaseMissing('blog_posts_tags', [
             'post_id' => $post->id,
             'tag_id' => $tag->id,
         ]);
 
-        $this->assertDatabaseMissing('canvas_posts_topics', [
+        $this->assertDatabaseMissing('blog_posts_topics', [
             'post_id' => $post->id,
             'topic_id' => $tag->id,
         ]);

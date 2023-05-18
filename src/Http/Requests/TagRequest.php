@@ -29,7 +29,7 @@ class TagRequest extends FormRequest
             'slug' => [
                 'required',
                 'alpha_dash',
-                Rule::unique('canvas_tags')->where(function ($query) {
+                Rule::unique('blog_tags')->where(function ($query) {
                     return $query->where('slug', request('slug'))->where('user_id', request()->user('canvas')->id);
                 })->ignore(request('id'))->whereNull('deleted_at'),
             ],
