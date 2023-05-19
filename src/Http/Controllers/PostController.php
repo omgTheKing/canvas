@@ -22,46 +22,40 @@ class PostController extends Controller
      */
     public function index(): JsonResponse
     {
+        $type = request()->query('type', 'approved');
         $posts = Post::query()
                     ->select('id', 'title', 'summary', 'featured_image', 'published_at', 'created_at', 'updated_at')
                      ->when(request()->user('canvas')->isContributor || request()->query('scope', 'user') != 'all', function (Builder $query) {
                          return $query->where('user_id', request()->user('canvas')->id);
-                     }, function (Builder $query) {
-                         return $query;
                      })
-                     ->when(request()->query('type', 'published') != 'draft', function (Builder $query) {
+                     ->when($type == 'published', function (Builder $query) {
                          return $query->published();
-                     }, function (Builder $query) {
-                         return $query->draft();
                      })
+                    ->when($type == 'draft', function (Builder $query) {
+                        return $query->draft();
+                    })
+                    ->when($type == 'approved', function (Builder $query) {
+                        return $query->approved();
+                    })
                      ->latest()
                      ->withCount('views')
                      ->paginate();
 
         // TODO: The count() queries here are duplicated
 
-        $draftCount = Post::query()
-                          ->when(request()->user('canvas')->isContributor || request()->query('scope', 'user') != 'all', function (Builder $query) {
-                              return $query->where('user_id', request()->user('canvas')->id);
-                          }, function (Builder $query) {
-                              return $query;
-                          })
-                          ->draft()
-                          ->count();
-
-        $publishedCount = Post::query()
-                              ->when(request()->user('canvas')->isContributor || request()->query('scope', 'user') != 'all', function (Builder $query) {
-                                  return $query->where('user_id', request()->user('canvas')->id);
-                              }, function (Builder $query) {
-                                  return $query;
-                              })
-                              ->published()
-                              ->count();
+        $basePostQuery =  Post::query()
+            ->when(request()->user('canvas')->isContributor || request()->query('scope', 'user') != 'all', function (Builder $query) {
+                return $query->where('user_id', request()->user('canvas')->id);
+            });
+        $draftCount = $basePostQuery->clone()->draft()->count();
+        $publishedCount = $basePostQuery->clone()->published()->count();
+        $approvedCount = $basePostQuery->clone()->approved()->count();
 
         return response()->json([
             'posts' => $posts,
             'draftCount' => $draftCount,
             'publishedCount' => $publishedCount,
+            'approvedCount' => $approvedCount,
         ], 200);
     }
 
@@ -108,8 +102,16 @@ class PostController extends Controller
                     ->find($id);
 
         // Contributorlar yayinlanan postlari artik guncelleyemezler.
-        if ($post !== null && $post->published_at !== null && $user->isContributor) {
-            return response()->json($post->refresh(), 403);
+        if ($post !== null && !empty($post->approved_at)) {
+            if ($user->isContributor) {
+                return response()->json($post->refresh(), 403);
+            }
+
+            $data = array_intersect_key($data, [
+                'published_at' => null,
+                'approved_at' => null,
+                'approved_by' => null
+            ]);
         }
         if (! $post) {
             $post = new Post(['id' => $id]);

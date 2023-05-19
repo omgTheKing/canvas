@@ -189,7 +189,7 @@ class Post extends Model
      */
     public function scopePublished(Builder $query): Builder
     {
-        return $query->where('published_at', '<=', now()->toDateTimeString());
+        return $query->where('published_at', '<=', now()->toDateTimeString())->whereNull('approved_at');
     }
 
     /**

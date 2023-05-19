@@ -87,7 +87,7 @@
                                             <p class="text-secondary mb-2">
                                                 <span class="d-none d-md-inline"> {{ post.read_time }} ― </span>
                                                 {{ trans.published }}
-                                                {{ moment(post.published_at).format('MMM D, YYYY') }}
+                                                {{ moment(post.approved_at).format('MMM D, YYYY') }}
                                             </p>
                                         </div>
                                         <div class="ml-auto">

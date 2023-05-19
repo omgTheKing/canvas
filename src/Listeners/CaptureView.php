@@ -28,12 +28,14 @@ class CaptureView
             ];
 
             $event->post->views()->create($data);
+            $event->post->newModelQuery()->increment('view_count');
 
             $this->storeInSession($event->post);
         }
     }
 
-    private function cacheKey(Post $post): string {
+    private function cacheKey(Post $post): string
+    {
         return 'canvas_post_view:'. md5(request()->ip() . $post->id);
     }
 

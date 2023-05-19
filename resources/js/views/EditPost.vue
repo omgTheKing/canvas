@@ -16,7 +16,10 @@
                 </ul>
             </template>
 
-            <template slot="options" v-if="isEditor || isAdmin || !isPublished(post.published_at)">
+            <template
+                slot="options"
+                v-if="isEditor || isAdmin || (isContributor ? !isPublished(post.approved_at) : false)"
+            >
                 <div class="dropdown">
                     <a
                         id="navbarDropdown"
@@ -41,39 +44,47 @@
                         </svg>
                     </a>
 
-                    <div
-                        class="dropdown-menu dropdown-menu-right"
-                        v-if="isEditor || isAdmin || !isPublished(post.published_at)"
-                    >
+                    <div class="dropdown-menu dropdown-menu-right">
                         <router-link
-                            v-if="isPublished(post.published_at)"
+                            v-if="isPublished(post.approved_at)"
                             :to="{ name: 'post-stats', params: { id: uri } }"
                             class="dropdown-item"
                         >
                             {{ trans.view_stats }}
                         </router-link>
-                        <div v-if="isPublished(post.published_at)" class="dropdown-divider" />
+                        <div v-if="isPublished(post.approved_at)" class="dropdown-divider" />
                         <a
-                            v-if="isDraft(post.published_at) && (isAdmin || isEditor)"
+                            v-if="isDraft(post.published_at)"
                             href="#"
                             class="dropdown-item"
-                            @click="showPublishModal"
+                            @click="updatePublishedAt()"
                         >
-                            {{ trans.publish }}
+                            Yayına Sun
+                        </a>
+                        <a
+                            v-if="postStatus === 2 && (isAdmin || isEditor)"
+                            href="#"
+                            class="dropdown-item"
+                            @click="updateApprovedAt()"
+                        >
+                            Yayınla
+                        </a>
+                        <a v-if="postStatus === 2" href="#" class="dropdown-item" @click="convertToDraft()">
+                            {{ trans.convert_to_draft }}
+                        </a>
+                        <a
+                            v-if="postStatus === 3 && (isAdmin || isEditor)"
+                            href="#"
+                            class="dropdown-item"
+                            @click="convertToDraft()"
+                        >
+                            {{ trans.convert_to_draft }}
                         </a>
                         <a href="#" class="dropdown-item" @click="showSettingsModal"> {{ trans.general_settings }} </a>
                         <a href="#" class="dropdown-item" @click="showFeaturedImageModal">
                             {{ trans.featured_image }}
                         </a>
                         <a href="#" class="dropdown-item" @click="showSeoModal"> {{ trans.seo_settings }} </a>
-                        <a
-                            v-if="isPublished(post.published_at) && (isEditor || isAdmin)"
-                            href="#"
-                            class="dropdown-item"
-                            @click.prevent="convertToDraft"
-                        >
-                            {{ trans.convert_to_draft }}
-                        </a>
                         <a
                             v-if="!creatingPost && (isEditor || isAdmin || !isPublished(post.published_at))"
                             href="#"
@@ -119,7 +130,6 @@
         </main>
 
         <section v-if="isReady">
-            <publish-modal ref="publishModal" :post="post" @publish="updatePublishedAt" />
             <settings-modal
                 ref="settingsModal"
                 :post="post"
@@ -174,6 +184,7 @@ import debounce from 'lodash/debounce';
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 import status from '../mixins/status';
+import moment from 'moment';
 
 Vue.use(VueTextAreaAutosize);
 
@@ -202,6 +213,7 @@ export default {
                 summary: null,
                 body: null,
                 published_at: null,
+                approved_at: null,
                 featured_image: null,
                 featured_image_caption: null,
                 meta: {
@@ -232,6 +244,19 @@ export default {
 
         creatingPost() {
             return this.$route.name === 'create-post';
+        },
+
+        postStatus() {
+            if (this.creatingPost) {
+                return 0;
+            }
+            if (this.isDraft(this.post.published_at)) {
+                return 1;
+            }
+            if (this.isPublished(this.post.published_at) && isEmpty(this.post.approved_at)) {
+                return 2;
+            }
+            return 3;
         },
     },
 
@@ -268,6 +293,7 @@ export default {
                     this.post.summary = get(data.post, 'summary', '');
                     this.post.body = get(data.post, 'body', '');
                     this.post.published_at = get(data.post, 'published_at', '');
+                    this.post.approved_at = get(data.post, 'approved_at', '');
                     this.post.featured_image = get(data.post, 'featured_image', '');
                     this.post.featured_image_caption = get(data.post, 'featured_image_caption', '');
                     this.post.meta.description = get(data.post.meta, 'description', '');
@@ -278,7 +304,7 @@ export default {
 
                     this.tags = get(data, 'tags', []);
                     this.topics = get(data, 'topics', []);
-                    this.editDisabled = this.isContributor && !!this.post.published_at;
+                    this.editDisabled = this.isContributor && !!this.post.approved_at;
 
                     NProgress.inc();
                 })
@@ -289,11 +315,17 @@ export default {
 
         convertToDraft() {
             this.post.published_at = null;
+            this.post.approved_at = null;
             this.savePost();
         },
 
-        updatePublishedAt(date) {
-            this.post.published_at = date;
+        updatePublishedAt() {
+            this.post.published_at = moment().format('YYYY-MM-DD HH:mm:ss');
+            this.savePost();
+        },
+
+        updateApprovedAt() {
+            this.post.approved_at = moment().format('YYYY-MM-DD HH:mm:ss');
             this.savePost();
         },
 
@@ -346,6 +378,10 @@ export default {
             this.isSaved = false;
             this.post.title = this.post.title || 'Title';
 
+            const post = this.post;
+            if (this.isContributor) {
+                delete post.approved_at;
+            }
             await this.request()
                 .post(`/api/posts/${this.post.id}`, this.post)
                 .then(({ data }) => {

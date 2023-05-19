@@ -47,7 +47,8 @@
                         class="ml-auto w-auto custom-select border-0"
                         @change="changeType"
                     >
-                        <option value="published">{{ trans.published }} ({{ suffixedNumber(publishedCount) }})</option>
+                        <option value="approved">Yayinlanan ({{ suffixedNumber(approvedCount) }})</option>
+                        <option value="published">Yayina sunulan ({{ suffixedNumber(publishedCount) }})</option>
                         <option value="draft">{{ trans.draft }} ({{ suffixedNumber(draftCount) }})</option>
                     </select>
                 </div>
@@ -187,8 +188,9 @@ export default {
             page: 1,
             posts: [],
             publishedCount: 0,
+            approvedCount: 0,
             draftCount: 0,
-            type: 'published',
+            type: 'approved',
             infiniteId: +new Date(),
             isReady: false,
         };
@@ -220,6 +222,7 @@ export default {
                     })
                     .then(({ data }) => {
                         this.publishedCount = data.publishedCount;
+                        this.approvedCount = data.approvedCount;
                         this.draftCount = data.draftCount;
 
                         if (!isEmpty(data) && !isEmpty(data.posts.data)) {

@@ -26,6 +26,7 @@ class CreateCanvasTables extends Migration
             $table->string('featured_image_caption')->nullable();
             $table->uuid('user_id')->index();
             $table->json('meta')->nullable();
+            $table->integer('view_count')->default(0);
             $table->timestamps();
             $table->softDeletes();
             $table->unique(['slug', 'user_id']);

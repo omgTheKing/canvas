@@ -11,7 +11,7 @@ class PublishCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'canvas:publish { --force : Overwrite any existing files }';
+    protected $signature = 'blog:publish { --force : Overwrite any existing files }';
 
     /**
      * The console command description.

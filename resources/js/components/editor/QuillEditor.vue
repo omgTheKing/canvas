@@ -185,7 +185,7 @@ export default {
                 },
                 theme: 'bubble',
                 scrollingContainer: 'html, body',
-                placeholder: this.trans.tell_your_story,
+                placeholder: this.disabled ? '' : this.trans.tell_your_story,
             });
             quill.enable(!this.disabled);
 

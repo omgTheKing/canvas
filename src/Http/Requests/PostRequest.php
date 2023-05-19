@@ -14,6 +14,17 @@ class PostRequest extends FormRequest
      */
     public function authorize()
     {
+        if ($this->has('approved_at')) {
+            $user = $this->user('canvas');
+            if ($user === null) {
+                return false;
+            }
+
+            $this->merge([
+                'approved_by' => $this->get('approved_at') === null ? null : $user->id
+            ]);
+            return $user->role > 1;
+        }
         return true;
     }
 
@@ -36,6 +47,8 @@ class PostRequest extends FormRequest
             'summary' => 'nullable|string',
             'body' => 'nullable|string',
             'published_at' => 'nullable|date',
+            'approved_at' => 'nullable|date',
+            'approved_by' => 'nullable|string',
             'featured_image' => 'nullable|string',
             'featured_image_caption' => 'nullable|string',
             'meta' => 'nullable|array',

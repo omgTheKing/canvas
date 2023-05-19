@@ -24,7 +24,7 @@ class StatsController extends Controller
                          return $query->where('user_id', request()->user('canvas')->id);
                      })
                      ->withCount('views', 'visits')
-                     ->published()
+                     ->approved()
                      ->latest()
                      ->get();
 
