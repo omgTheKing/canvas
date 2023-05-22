@@ -6,7 +6,6 @@ use Canvas\Canvas;
 use Canvas\Models\Post;
 use Canvas\Models\User;
 use Canvas\Models\View;
-use Canvas\Models\Visit;
 use Carbon\CarbonInterval;
 use DateInterval;
 use DatePeriod;
@@ -51,20 +50,11 @@ class StatsAggregator
                          today()->endOfDay()->toDateTimeString(),
                      ])->get();
 
-        $visits = Visit::query()
-                       ->select('created_at')
-                       ->whereIn('post_id', $posts->pluck('id'))
-                       ->whereBetween('created_at', [
-                           today()->subDays($days)->startOfDay()->toDateTimeString(),
-                           today()->endOfDay()->toDateTimeString(),
-                       ])->get();
 
         return [
             'views' => $views->count(),
-            'visits' => $visits->count(),
             'graph' => [
                 'views' => $this->calculateTotalForDays($views, $days)->toJson(),
-                'visits' => $this->calculateTotalForDays($visits, $days)->toJson(),
             ],
         ];
     }
@@ -82,17 +72,7 @@ class StatsAggregator
             today()->endOfMonth()->endOfDay()->toDateTimeString(),
         ]);
 
-        $currentVisits = $post->visits->whereBetween('created_at', [
-            today()->startOfMonth()->startOfDay()->toDateTimeString(),
-            today()->endOfMonth()->endOfDay()->toDateTimeString(),
-        ]);
-
         $previousViews = $post->views->whereBetween('created_at', [
-            today()->subMonthNoOverflow()->startOfMonth()->startOfDay()->toDateTimeString(),
-            today()->subMonthNoOverflow()->endOfMonth()->endOfDay()->toDateTimeString(),
-        ]);
-
-        $previousVisits = $post->visits->whereBetween('created_at', [
             today()->subMonthNoOverflow()->startOfMonth()->startOfDay()->toDateTimeString(),
             today()->subMonthNoOverflow()->endOfMonth()->endOfDay()->toDateTimeString(),
         ]);
@@ -104,18 +84,15 @@ class StatsAggregator
             'topReferers' => $this->calculateTopReferers($post),
             'monthlyViews' => $currentViews->count(),
             'totalViews' => $post->views->count(),
-            'monthlyVisits' => $currentVisits->count(),
             'monthOverMonthViews' => $this->compareMonthOverMonth($currentViews, $previousViews),
-            'monthOverMonthVisits' => $this->compareMonthOverMonth($currentVisits, $previousVisits),
             'graph' => [
                 'views' => $this->calculateTotalForDays($currentViews, 30)->toJson(),
-                'visits' => $this->calculateTotalForDays($currentVisits, 30)->toJson(),
             ],
         ];
     }
 
     /**
-     * Given a collection of Views or Visits, return an array of formatted
+     * Given a collection of Views, return an array of formatted
      * date strings and their related counts for a given number of days.
      *
      * example: [ Y-m-d => total ]

@@ -141,74 +141,10 @@
                                         {{ data.monthOverMonthViews.percentage }}% {{ trans.from_last_month }}
                                     </p>
                                 </div>
-
-                                <div>
-                                    <p class="mb-0 small text-muted text-uppercase font-weight-bold">
-                                        <a
-                                            v-tooltip="{ placement: 'top' }"
-                                            href="#"
-                                            class="text-decoration-none"
-                                            :title="trans.visits_info"
-                                        >
-                                            {{ trans.visitors }}
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                width="17"
-                                                viewBox="0 0 24 24"
-                                                class="icon-help ml-1"
-                                            >
-                                                <path
-                                                    class="fill-light-gray"
-                                                    d="M12 22a10 10 0 1 1 0-20 10 10 0 0 1 0 20z"
-                                                />
-                                                <path
-                                                    class="fill-bg"
-                                                    d="M12 19.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm1-5.5a1 1 0 0 1-2 0v-1.41a1 1 0 0 1 .55-.9L14 10.5C14.64 10.08 15 9.53 15 9c0-1.03-1.3-2-3-2-1.35 0-2.49.62-2.87 1.43a1 1 0 0 1-1.8-.86C8.05 6.01 9.92 5 12 5c2.7 0 5 1.72 5 4 0 1.3-.76 2.46-2.05 3.24L13 13.2V14z"
-                                                />
-                                            </svg>
-                                        </a>
-                                    </p>
-                                    <h3 class="mt-1 mb-2">
-                                        {{ suffixedNumber(data.monthlyVisits) }}
-                                    </h3>
-                                    <p class="small text-muted">
-                                        <span v-if="visitsAreTrendingUp">
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                viewBox="0 0 24 24"
-                                                width="17"
-                                                class="icon-arrow-thick-up-circle mr-1"
-                                            >
-                                                <circle cx="12" cy="12" r="10" class="fill-light-gray" />
-                                                <path
-                                                    class="fill-bg"
-                                                    d="M14 12v5a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-5H8a1 1 0 0 1-.7-1.7l4-4a1 1 0 0 1 1.4 0l4 4A1 1 0 0 1 16 12h-2z"
-                                                />
-                                            </svg>
-                                        </span>
-                                        <span v-else>
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                viewBox="0 0 24 24"
-                                                width="17"
-                                                class="icon-arrow-thick-down-circle mr-1"
-                                            >
-                                                <circle cx="12" cy="12" r="10" class="fill-light-gray" />
-                                                <path
-                                                    class="fill-bg"
-                                                    d="M10 12V7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v5h2a1 1 0 0 1 .7 1.7l-4 4a1 1 0 0 1-1.4 0l-4-4A1 1 0 0 1 8 12h2z"
-                                                />
-                                            </svg>
-                                        </span>
-                                        {{ data.monthOverMonthVisits.percentage }}% {{ trans.from_last_month }}
-                                    </p>
-                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <line-chart :views="plotViewPoints" :visits="plotVisitPoints" class="mt-5 mb-3" />
 
                 <div class="row justify-content-between">
                     <div class="col-md-6 mt-4">
@@ -377,16 +313,8 @@ export default {
             return this.data.monthOverMonthViews.direction === 'up';
         },
 
-        visitsAreTrendingUp() {
-            return this.data.monthOverMonthVisits.direction === 'up';
-        },
-
         plotViewPoints() {
             return JSON.parse(this.data.graph.views);
-        },
-
-        plotVisitPoints() {
-            return JSON.parse(this.data.graph.visits);
         },
     },
 

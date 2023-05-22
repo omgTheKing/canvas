@@ -139,16 +139,6 @@ class Post extends Model
     }
 
     /**
-     * Get the visits relationship.
-     *
-     * @return HasMany
-     */
-    public function visits(): HasMany
-    {
-        return $this->hasMany(Visit::class);
-    }
-
-    /**
      * Get the human-friendly estimated reading time of a given text.
      *
      * @return string

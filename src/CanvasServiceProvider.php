@@ -113,6 +113,7 @@ class CanvasServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+            $this->loadFactoriesFrom(__DIR__.'/../database/factories');
         }
     }
 

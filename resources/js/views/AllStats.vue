@@ -42,24 +42,9 @@
                                 <p class="card-text display-4">{{ suffixedNumber(data.views) }}</p>
                             </div>
                         </div>
-                        <div class="card shadow-lg">
-                            <div
-                                class="card-header pb-0 bg-transparent d-flex justify-content-between align-middle border-0"
-                            >
-                                <p class="font-weight-bold text-muted small text-uppercase">{{ trans.visitors }}</p>
-                                <p>
-                                    <span class="badge badge-pill badge-primary p-2 font-weight-bold">{{
-                                        trans.last_thirty_days
-                                    }}</span>
-                                </p>
-                            </div>
-                            <div class="card-body pt-0 pb-2">
-                                <p class="card-text display-4">{{ suffixedNumber(data.visits) }}</p>
-                            </div>
-                        </div>
                     </div>
 
-                    <line-chart :views="plotViewPoints" :visits="plotVisitPoints" class="mt-5" />
+                    <line-chart :views="plotViewPoints" class="mt-5" />
 
                     <div class="mt-5 card shadow-lg">
                         <div class="card-body p-0">
@@ -187,10 +172,6 @@ export default {
 
         plotViewPoints() {
             return JSON.parse(this.data.graph.views);
-        },
-
-        plotVisitPoints() {
-            return JSON.parse(this.data.graph.visits);
         },
     },
 

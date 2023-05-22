@@ -17,11 +17,6 @@ export default {
             type: Object,
             required: true,
         },
-
-        visits: {
-            type: Object,
-            required: true,
-        },
     },
 
     computed: {
@@ -34,17 +29,10 @@ export default {
                 labels: Object.keys(this.views),
                 datasets: [
                     {
-                        label: this.trans.visits,
-                        data: Object.values(this.visits),
-                        backgroundColor: ['rgba(158, 213, 237, 0.5)'],
-                        borderColor: ['rgb(84, 175, 204)'],
-                        borderWidth: 3,
-                    },
-                    {
                         label: this.trans.views,
                         data: Object.values(this.views),
-                        backgroundColor: ['rgba(3, 168, 124, .5)'],
-                        borderColor: ['#03a87c'],
+                        backgroundColor: ['rgba(158, 213, 237, 0.5)'],
+                        borderColor: ['rgb(84, 175, 204)'],
                         borderWidth: 3,
                     },
                 ],
@@ -85,8 +73,6 @@ export default {
                     callbacks: {
                         label: function (tooltipItem) {
                             if (tooltipItem.datasetIndex === 0) {
-                                return ref.uniqueVisitorLabel(tooltipItem.value);
-                            } else if (tooltipItem.datasetIndex === 1) {
                                 return ref.viewLabel(tooltipItem.value);
                             }
                         },
@@ -158,14 +144,6 @@ export default {
                 return `${value} ${this.trans.view.toLowerCase()}`;
             } else {
                 return `${value} ${this.trans.views.toLowerCase()}`;
-            }
-        },
-
-        uniqueVisitorLabel(value) {
-            if (Number(value) === 1) {
-                return `${value} ${this.trans.unique_visit}`;
-            } else {
-                return `${value} ${this.trans.unique_visits}`;
             }
         },
     },

@@ -14,14 +14,15 @@ class CreateCanvasTables extends Migration
     public function up()
     {
         Schema::create('blog_posts', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->string('slug');
+            $table->uuid('id')->index();
+            $table->string('slug')->index();
             $table->string('title');
             $table->text('summary')->nullable();
             $table->text('body')->nullable();
             $table->dateTime('published_at')->nullable()->comment('yayına sunduğu tarih');
             $table->dateTime('approved_at')->nullable()->comment('editör yayınladığı tarih');
             $table->uuid('approved_by')->nullable()->index();
+            $table->uuid('reviwed_by')->nullable()->index();
             $table->string('featured_image')->nullable();
             $table->string('featured_image_caption')->nullable();
             $table->uuid('user_id')->index();
@@ -29,7 +30,6 @@ class CreateCanvasTables extends Migration
             $table->integer('view_count')->default(0);
             $table->timestamps();
             $table->softDeletes();
-            $table->unique(['slug', 'user_id']);
         });
 
         Schema::create('blog_tags', function (Blueprint $table) {
@@ -76,15 +76,6 @@ class CreateCanvasTables extends Migration
             $table->index('created_at');
         });
 
-        Schema::create('blog_visits', function (Blueprint $table) {
-            $table->increments('id');
-            $table->uuid('post_id');
-            $table->string('ip')->nullable();
-            $table->text('agent')->nullable();
-            $table->string('referer')->nullable();
-            $table->timestamps();
-        });
-
         Schema::create('blog_users', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name');
@@ -116,7 +107,6 @@ class CreateCanvasTables extends Migration
         Schema::dropIfExists('blog_posts_tags');
         Schema::dropIfExists('blog_posts_topics');
         Schema::dropIfExists('blog_views');
-        Schema::dropIfExists('blog_visits');
         Schema::dropIfExists('blog_users');
     }
 }

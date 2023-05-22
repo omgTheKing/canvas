@@ -56,11 +56,12 @@ class AuthenticatedSessionController extends Controller
 
         try {
             $user = JWTAuth::setToken($token)->authenticate();
-            if ($user->canvas === null) {
+            info('user', $user->toArray());
+            if ($user->blogger === null) {
                 throw new Exception('Canvas user not found for user ' . $user->id);
             }
 
-            auth('canvas')->login($user->canvas);
+            auth('canvas')->login($user->blogger);
             $request->session()->regenerate();
             return redirect()->to(route('canvas') . '/posts');
         } catch (\Exception $e) {

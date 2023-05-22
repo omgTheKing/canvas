@@ -16,7 +16,7 @@ class DigestCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'canvas:digest';
+    protected $signature = 'blog:digest';
 
     /**
      * The console command description.
@@ -50,19 +50,12 @@ class DigestCommand extends Command
                                  $endDate,
                              ]);
                          }])
-                         ->withCount(['visits' => function (Builder $query) use ($startDate, $endDate) {
-                             $query->whereBetween('created_at', [
-                                 $startDate,
-                                 $endDate,
-                             ]);
-                         }])
                          ->get();
 
             $data = [
                 'posts' => $posts->toArray(),
                 'totals' => [
                     'views' => $posts->sum('views_count'),
-                    'visits' => $posts->sum('visits_count'),
                 ],
                 'startDate' => $startDate->format('M j'),
                 'endDate' => $endDate->format('M j'),

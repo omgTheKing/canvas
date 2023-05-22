@@ -6,7 +6,6 @@ use Canvas\Models\Post;
 use Canvas\Models\Tag;
 use Canvas\Models\Topic;
 use Canvas\Models\View;
-use Canvas\Models\Visit;
 use Canvas\Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Ramsey\Uuid\Uuid;
@@ -267,11 +266,6 @@ class PostControllerTest extends TestCase
             'created_at' => now()->subMonthNoOverflow(),
         ]);
 
-        factory(Visit::class)->create([
-            'post_id' => $post->id,
-            'created_at' => now()->subMonthNoOverflow(),
-        ]);
-
         $this->actingAs($this->admin, 'canvas')
              ->getJson("canvas/api/posts/{$post->id}/stats")
              ->assertSuccessful()
@@ -282,7 +276,6 @@ class PostControllerTest extends TestCase
                  'topReferers',
                  'monthlyViews',
                  'totalViews',
-                 'monthlyVisits',
                  'graph' => [
                      'views',
                      'visits',
@@ -290,12 +283,6 @@ class PostControllerTest extends TestCase
              ])
              ->assertJsonFragment([
                  'monthOverMonthViews' => [
-                     'direction' => 'down',
-                     'percentage' => '100',
-                 ],
-             ])
-             ->assertJsonFragment([
-                 'monthOverMonthVisits' => [
                      'direction' => 'down',
                      'percentage' => '100',
                  ],
@@ -318,12 +305,7 @@ class PostControllerTest extends TestCase
                  'topReferers',
                  'monthlyViews',
                  'totalViews',
-                 'monthlyVisits',
                  'monthOverMonthViews' => [
-                     'direction',
-                     'percentage',
-                 ],
-                 'monthOverMonthVisits' => [
                      'direction',
                      'percentage',
                  ],
@@ -350,12 +332,7 @@ class PostControllerTest extends TestCase
                  'topReferers',
                  'monthlyViews',
                  'totalViews',
-                 'monthlyVisits',
                  'monthOverMonthViews' => [
-                     'direction',
-                     'percentage',
-                 ],
-                 'monthOverMonthVisits' => [
                      'direction',
                      'percentage',
                  ],

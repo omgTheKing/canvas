@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Ramsey\Uuid\Uuid;
+use Illuminate\Support\Str;
 
 class PostController extends Controller
 {
@@ -40,8 +41,6 @@ class PostController extends Controller
                      ->latest()
                      ->withCount('views')
                      ->paginate();
-
-        // TODO: The count() queries here are duplicated
 
         $basePostQuery =  Post::query()
             ->when(request()->user('canvas')->isContributor || request()->query('scope', 'user') != 'all', function (Builder $query) {
@@ -102,22 +101,23 @@ class PostController extends Controller
                     ->find($id);
 
         // Contributorlar yayinlanan postlari artik guncelleyemezler.
-        if ($post !== null && !empty($post->approved_at)) {
-            if ($user->isContributor) {
-                return response()->json($post->refresh(), 403);
-            }
-
-            $data = array_intersect_key($data, [
-                'published_at' => null,
-                'approved_at' => null,
-                'approved_by' => null
-            ]);
+        if ($user->isContributor && $post !== null && !empty($post->approved_at)) {
+            return response()->json($post->refresh(), 403);
         }
         if (! $post) {
             $post = new Post(['id' => $id]);
         }
 
-        $post->fill($data);
+        $slug = $data['slug'];
+        if ($post->title !== $data['title'] || str_starts_with($data['slug'], 'post-')) {
+            $slug = Str::slug($data['title']);
+            if (Post::where('id', '!=', $post->id)->where('slug', $slug)->exists()) {
+                $slug .= '-' . rand(0, 9999);
+            }
+        }
+        $post->fill(array_merge($data, [
+            'slug' => $slug
+        ]));
 
         $post->user_id = $post->user_id ?? request()->user('canvas')->id;
 

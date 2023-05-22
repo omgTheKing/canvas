@@ -7,7 +7,6 @@ use Canvas\Models\Tag;
 use Canvas\Models\Topic;
 use Canvas\Models\User;
 use Canvas\Models\View;
-use Canvas\Models\Visit;
 use Canvas\Tests\TestCase;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -112,18 +111,6 @@ class PostTest extends TestCase
 
         $this->assertInstanceOf(HasMany::class, $post->views());
         $this->assertInstanceOf(View::class, $post->views->first());
-    }
-
-    public function testVisitsRelationship(): void
-    {
-        $post = factory(Post::class)->create();
-
-        factory(Visit::class)->create([
-            'post_id' => $post->id,
-        ]);
-
-        $this->assertInstanceOf(HasMany::class, $post->visits());
-        $this->assertInstanceOf(Visit::class, $post->visits->first());
     }
 
     public function testPublishedScope(): void
