@@ -6,7 +6,6 @@ use Illuminate\Support\Str;
 
 $factory->define(\Canvas\Models\User::class, function (Faker\Generator $faker) {
     return [
-        'id' => $faker->uuid,
         'name' => $faker->name,
         'email' => $faker->safeEmail,
         'username' => Str::slug($faker->userName),

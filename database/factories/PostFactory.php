@@ -3,7 +3,7 @@
 /* @var \Illuminate\Database\Eloquent\Factory $factory */
 $factory->define(\Canvas\Models\Post::class, function (Faker\Generator $faker) {
     return [
-        'id' => $faker->uuid,
+        'uuid' => $faker->uuid,
         'slug' => $faker->slug,
         'title' => $faker->word,
         'summary' => $faker->sentence,

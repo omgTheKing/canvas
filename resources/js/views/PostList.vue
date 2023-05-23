@@ -55,11 +55,11 @@
 
                 <div class="mt-5 card shadow-lg">
                     <div class="card-body p-0">
-                        <div :key="`${index}-${post.id}`" v-for="(post, index) in posts">
+                        <div :key="`${index}-${post.uuid}`" v-for="(post, index) in posts">
                             <router-link
                                 :to="{
                                     name: 'edit-post',
-                                    params: { id: post.id },
+                                    params: { id: post.uuid },
                                 }"
                                 class="text-decoration-none"
                             >

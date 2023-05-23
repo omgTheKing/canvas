@@ -13,71 +13,8 @@ class CreateCanvasTables extends Migration
      */
     public function up()
     {
-        Schema::create('blog_posts', function (Blueprint $table) {
-            $table->uuid('id')->index();
-            $table->string('slug')->index();
-            $table->string('title');
-            $table->text('summary')->nullable();
-            $table->text('body')->nullable();
-            $table->dateTime('published_at')->nullable()->comment('yayına sunduğu tarih');
-            $table->dateTime('approved_at')->nullable()->comment('editör yayınladığı tarih');
-            $table->uuid('approved_by')->nullable()->index();
-            $table->uuid('reviwed_by')->nullable()->index();
-            $table->string('featured_image')->nullable();
-            $table->string('featured_image_caption')->nullable();
-            $table->uuid('user_id')->index();
-            $table->json('meta')->nullable();
-            $table->integer('view_count')->default(0);
-            $table->timestamps();
-            $table->softDeletes();
-        });
-
-        Schema::create('blog_tags', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->string('slug');
-            $table->string('name');
-            $table->uuid('user_id')->index();
-            $table->timestamps();
-            $table->softDeletes();
-            $table->index('created_at');
-            $table->unique(['slug', 'user_id']);
-        });
-
-        Schema::create('blog_topics', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->string('slug');
-            $table->string('name');
-            $table->uuid('user_id')->index();
-            $table->timestamps();
-            $table->softDeletes();
-            $table->index('created_at');
-            $table->unique(['slug', 'user_id']);
-        });
-
-        Schema::create('blog_posts_tags', function (Blueprint $table) {
-            $table->uuid('post_id');
-            $table->uuid('tag_id');
-            $table->unique(['post_id', 'tag_id']);
-        });
-
-        Schema::create('blog_posts_topics', function (Blueprint $table) {
-            $table->uuid('post_id');
-            $table->uuid('topic_id');
-            $table->unique(['post_id', 'topic_id']);
-        });
-
-        Schema::create('blog_views', function (Blueprint $table) {
-            $table->increments('id');
-            $table->uuid('post_id')->index();
-            $table->string('ip')->nullable();
-            $table->text('agent')->nullable();
-            $table->string('referer')->nullable();
-            $table->timestamps();
-            $table->index('created_at');
-        });
-
         Schema::create('blog_users', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->id();
             $table->string('name');
             $table->string('email')->unique();
             $table->string('username')->unique()->nullable();
@@ -91,6 +28,69 @@ class CreateCanvasTables extends Migration
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();
+        });
+        Schema::create('blog_posts', function (Blueprint $table) {
+            $table->id();
+            $table->uuid('uuid');
+            $table->string('slug')->index();
+            $table->string('title');
+            $table->text('summary')->nullable();
+            $table->text('body')->nullable();
+            $table->dateTime('published_at')->nullable()->comment('yayına sunduğu tarih');
+            $table->dateTime('approved_at')->nullable()->comment('editör yayınladığı tarih');
+            $table->foreignId('approved_by')->nullable()->constrained('blog_users')->nullOnDelete();
+            $table->foreignId('reviewed_by')->nullable()->constrained('blog_users')->nullOnDelete();
+            $table->string('featured_image')->nullable();
+            $table->string('featured_image_caption')->nullable();
+            $table->foreignId('user_id')->nullable()->constrained('blog_users')->nullOnDelete();
+            $table->json('meta')->nullable();
+            $table->integer('view_count')->default(0);
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
+        Schema::create('blog_tags', function (Blueprint $table) {
+            $table->id();
+            $table->string('slug');
+            $table->string('name');
+            $table->foreignId('user_id')->nullable()->constrained('blog_users')->nullOnDelete();
+            $table->timestamps();
+            $table->softDeletes();
+            $table->index('created_at');
+            $table->unique(['slug', 'user_id']);
+        });
+
+        Schema::create('blog_topics', function (Blueprint $table) {
+            $table->id();
+            $table->string('slug');
+            $table->string('name');
+            $table->foreignId('user_id')->nullable()->constrained('blog_users')->nullOnDelete();
+            $table->timestamps();
+            $table->softDeletes();
+            $table->index('created_at');
+            $table->unique(['slug', 'user_id']);
+        });
+
+        Schema::create('blog_posts_tags', function (Blueprint $table) {
+            $table->foreignId('post_id')->nullable()->constrained('blog_posts')->cascadeOnDelete();
+            $table->foreignId('tag_id')->nullable()->constrained('blog_tags')->cascadeOnDelete();
+            $table->unique(['post_id', 'tag_id']);
+        });
+
+        Schema::create('blog_posts_topics', function (Blueprint $table) {
+            $table->foreignId('post_id')->nullable()->constrained('blog_posts')->cascadeOnDelete();
+            $table->foreignId('topic_id')->nullable()->constrained('blog_topics')->cascadeOnDelete();
+            $table->unique(['post_id', 'topic_id']);
+        });
+
+        Schema::create('blog_views', function (Blueprint $table) {
+            $table->increments('id');
+            $table->char('post_id', 36);
+            $table->string('ip')->nullable();
+            $table->text('agent')->nullable();
+            $table->string('referer')->nullable();
+            $table->timestamps();
+            $table->index('created_at');
         });
     }
 

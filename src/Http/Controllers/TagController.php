@@ -34,9 +34,7 @@ class TagController extends Controller
      */
     public function create(): JsonResponse
     {
-        return response()->json(Tag::query()->make([
-            'id' => Uuid::uuid4()->toString(),
-        ]), 200);
+        return response()->json(Tag::query()->make(), 200);
     }
 
     /**

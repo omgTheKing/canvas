@@ -44,7 +44,7 @@ class StatsAggregator
     {
         $views = View::query()
                      ->select('created_at')
-                     ->whereIn('post_id', $posts->pluck('id'))
+                     ->whereIn('post_id', $posts->pluck('uuid'))
                      ->whereBetween('created_at', [
                          today()->subDays($days)->startOfDay()->toDateTimeString(),
                          today()->endOfDay()->toDateTimeString(),

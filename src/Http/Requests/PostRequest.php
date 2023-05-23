@@ -48,7 +48,7 @@ class PostRequest extends FormRequest
             'body' => 'nullable|string',
             'published_at' => 'nullable|date',
             'approved_at' => 'nullable|date',
-            'approved_by' => 'nullable|string',
+            'approved_by' => 'nullable|integer',
             'featured_image' => 'nullable|string',
             'featured_image_caption' => 'nullable|string',
             'meta' => 'nullable|array',

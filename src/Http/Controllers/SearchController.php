@@ -20,7 +20,7 @@ class SearchController extends Controller
     public function posts(): JsonResponse
     {
         $posts = Post::query()
-                     ->select('id', 'title')
+                     ->select('id', 'uuid', 'title')
                      ->when(request()->user('canvas')->isContributor, function (Builder $query) {
                          return $query->where('user_id', request()->user('canvas')->id);
                      }, function (Builder $query) {

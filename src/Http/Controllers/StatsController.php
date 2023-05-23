@@ -23,7 +23,7 @@ class StatsController extends Controller
                      }, function (Builder $query) {
                          return $query->where('user_id', request()->user('canvas')->id);
                      })
-                     ->withCount('views', 'visits')
+                     ->withCount('views')
                      ->approved()
                      ->latest()
                      ->get();

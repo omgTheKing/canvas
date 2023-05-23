@@ -165,6 +165,14 @@ export default {
         });
     },
 
+    watch: {
+      disabled: {
+        handler (val, oldVal) {
+            this.editor.enable(!val);
+        }
+      }
+    },
+
     methods: {
         createEditor() {
             Quill.register(DividerBlot, true);

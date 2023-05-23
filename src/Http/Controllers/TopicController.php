@@ -34,9 +34,7 @@ class TopicController extends Controller
      */
     public function create(): JsonResponse
     {
-        return response()->json(Topic::query()->make([
-            'id' => Uuid::uuid4()->toString(),
-        ]), 200);
+        return response()->json(Topic::query()->make(), 200);
     }
 
     /**

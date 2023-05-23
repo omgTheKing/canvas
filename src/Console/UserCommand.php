@@ -44,7 +44,6 @@ class UserCommand extends Command
 
         $user = new User();
         $user->fill([
-            'id' => Uuid::uuid4()->toString(),
             'email' => $email,
             'password' => Hash::make($password),
             'avatar' => Canvas::gravatar($email),

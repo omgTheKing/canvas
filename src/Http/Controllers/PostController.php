@@ -25,7 +25,7 @@ class PostController extends Controller
     {
         $type = request()->query('type', 'approved');
         $posts = Post::query()
-                    ->select('id', 'title', 'summary', 'featured_image', 'published_at', 'created_at', 'updated_at')
+                    ->select('id', 'uuid', 'title', 'summary', 'featured_image', 'published_at', 'created_at', 'updated_at')
                      ->when(request()->user('canvas')->isContributor || request()->query('scope', 'user') != 'all', function (Builder $query) {
                          return $query->where('user_id', request()->user('canvas')->id);
                      })
@@ -69,7 +69,7 @@ class PostController extends Controller
 
         return response()->json([
             'post' => Post::query()->make([
-                'id' => $uuid->toString(),
+                'uuid' => $uuid,
                 'slug' => "post-{$uuid->toString()}",
             ]),
             'tags' => Tag::query()->get(['name', 'slug']),
@@ -98,13 +98,21 @@ class PostController extends Controller
                         return $query;
                     })
                     ->with('tags', 'topic')
-                    ->find($id);
+                    ->where('uuid', $id)
+                    ->first();
 
-        // Contributorlar yayinlanan postlari artik guncelleyemezler.
-        if ($user->isContributor && $post !== null && !empty($post->approved_at)) {
-            return response()->json($post->refresh(), 403);
-        }
-        if (! $post) {
+        abort_if($user->isContributor && $post !== null && !empty($post->approved_at), 403, 'Contributors can\'t update approved posts.');
+        abort_if(!$user->isAdmin && $post?->user_id === $user->id, 403, 'users can\'t review their own posts');
+
+        $isReview = $post?->approved_at !== null;
+        if ($isReview) {
+            $oldPost = $post;
+            $post = $oldPost->replicate();
+            $post->reviewed_by = $user->id;
+            abort_unless($post->push(), 500, 'push failed');
+
+            $oldPost->delete();
+        } else if (! $post) {
             $post = new Post(['id' => $id]);
         }
 
@@ -115,12 +123,15 @@ class PostController extends Controller
                 $slug .= '-' . rand(0, 9999);
             }
         }
+        unset($data['id']);
         $post->fill(array_merge($data, [
             'slug' => $slug
         ]));
 
-        $post->user_id = $post->user_id ?? request()->user('canvas')->id;
-
+        $post->user_id ??= $user->id;
+        if ($isReview) {
+            $post->reviewed_by = $user->id;
+        }
         $post->save();
 
         $tags = Tag::query()->get(['id', 'name', 'slug']);
@@ -131,7 +142,6 @@ class PostController extends Controller
 
             if (! $tag) {
                 $tag = Tag::create([
-                    'id' => $id = Uuid::uuid4()->toString(),
                     'name' => $item['name'],
                     'slug' => $item['slug'],
                     'user_id' => request()->user('canvas')->id,
@@ -146,7 +156,6 @@ class PostController extends Controller
 
             if (! $topic) {
                 $topic = Topic::create([
-                    'id' => $id = Uuid::uuid4()->toString(),
                     'name' => $item['name'],
                     'slug' => $item['slug'],
                     'user_id' => request()->user('canvas')->id,
@@ -178,7 +187,8 @@ class PostController extends Controller
                         return $query;
                     })
                     ->with('tags:name,slug', 'topic:name,slug')
-                    ->findOrFail($id);
+                    ->where('uuid', $id)
+                    ->firstOrFail();
 
         return response()->json([
             'post' => $post,
@@ -202,7 +212,8 @@ class PostController extends Controller
                         return $query;
                     })
                     ->published()
-                    ->findOrFail($id);
+                    ->where('uuid', $id)
+                    ->firstOrFail();
 
         $stats = new StatsAggregator(request()->user('canvas'));
 
@@ -227,7 +238,8 @@ class PostController extends Controller
                     }, function (Builder $query) {
                         return $query;
                     })
-                    ->findOrFail($id);
+                    ->where('uuid', $id)
+                    ->firstOrFail();
 
         $post->delete();
 

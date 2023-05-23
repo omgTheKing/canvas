@@ -4,13 +4,16 @@
             <template slot="status">
                 <ul class="navbar-nav mr-auto flex-row float-right">
                     <li class="text-muted font-weight-bold">
-                        <div class="border-left pl-3">
+                        <div class="border-left pl-3 d-flex align-items-center" style="gap: 10px;">
                             <div v-if="!isSaving && !isSaved">
                                 <span v-if="isPublished(post.published_at)">{{ trans.published }}</span>
                                 <span v-if="isDraft(post.published_at)">{{ trans.draft }}</span>
                             </div>
                             <span v-if="isSaving">{{ trans.saving }}</span>
                             <span v-if="isSaved" class="text-success">{{ trans.saved }}</span>
+
+                            <span v-if="!editDisabled && isPublished(post.approved_at)" class="btn btn-danger" @click="savePost(true)">Kaydet</span>
+
                         </div>
                     </li>
                 </ul>
@@ -80,11 +83,11 @@
                         >
                             {{ trans.convert_to_draft }}
                         </a>
-                        <a href="#" class="dropdown-item" @click="showSettingsModal"> {{ trans.general_settings }} </a>
-                        <a href="#" class="dropdown-item" @click="showFeaturedImageModal">
+                        <a v-if="!editDisabled" href="#" class="dropdown-item" @click="showSettingsModal"> {{ trans.general_settings }} </a>
+                        <a v-if="!editDisabled" href="#" class="dropdown-item" @click="showFeaturedImageModal">
                             {{ trans.featured_image }}
                         </a>
-                        <a href="#" class="dropdown-item" @click="showSeoModal"> {{ trans.seo_settings }} </a>
+                        <a v-if="!editDisabled" href="#" class="dropdown-item" @click="showSeoModal"> {{ trans.seo_settings }} </a>
                         <a
                             v-if="!creatingPost && (isEditor || isAdmin || !isPublished(post.published_at))"
                             href="#"
@@ -101,7 +104,10 @@
         <main v-if="isReady" class="py-4">
             <div class="col-xl-8 offset-xl-2 col-lg-10 offset-lg-1 col-md-12">
                 <div class="form-group my-3" v-if="editDisabled">
-                    <p class="alert alert-danger w-100">Bu gönderi yayınlandığı için düzenleyemezsiniz!</p>
+                    <div class="alert alert-danger w-100">
+                        <p v-if="isContributor">Bu gönderi yayınlandığı için düzenleyemezsiniz!</p>
+                        <a v-else @click="editDisabled = false" style="cursor: pointer;">Düzenleme kilidini aç</a>
+                    </div>
                 </div>
                 <div class="form-group my-3" v-if="!editDisabled">
                     <textarea-autosize
@@ -124,7 +130,7 @@
                 </div>
 
                 <div class="form-group my-2">
-                    <quill-editor :key="post.id" :post="post" :disabled="editDisabled" @update-post="savePost" />
+                    <quill-editor :key="post.uuid" :post="post" :disabled="editDisabled" @update-post="savePost" />
                 </div>
             </div>
         </main>
@@ -284,10 +290,12 @@ export default {
 
     methods: {
         fetchPost() {
+            console.log(this.uri)
             return this.request()
                 .get(`/api/posts/${this.uri}`)
                 .then(({ data }) => {
                     this.post.id = data.post.id;
+                    this.post.uuid = data.post.uuid;
                     this.post.title = get(data.post, 'title', '');
                     this.post.slug = get(data.post, 'slug', '');
                     this.post.summary = get(data.post, 'summary', '');
@@ -304,7 +312,7 @@ export default {
 
                     this.tags = get(data, 'tags', []);
                     this.topics = get(data, 'topics', []);
-                    this.editDisabled = this.isContributor && !!this.post.approved_at;
+                    this.editDisabled = !!this.post.approved_at;
 
                     NProgress.inc();
                 })
@@ -372,7 +380,10 @@ export default {
             this.savePost();
         }, 3000),
 
-        async savePost() {
+        async savePost(force = false) {
+            if (!isEmpty(this.post.approved_at) && !force) {
+                return;
+            }
             this.errors = [];
             this.isSaving = true;
             this.isSaved = false;
@@ -383,7 +394,7 @@ export default {
                 delete post.approved_at;
             }
             await this.request()
-                .post(`/api/posts/${this.post.id}`, this.post)
+                .post(`/api/posts/${this.post.uuid}`, this.post)
                 .then(({ data }) => {
                     this.isSaving = false;
                     this.isSaved = true;
@@ -397,7 +408,7 @@ export default {
                 });
 
             if (isEmpty(this.errors) && this.creatingPost) {
-                await this.$router.push({ name: 'edit-post', params: { id: this.post.id } });
+                await this.$router.push({ name: 'edit-post', params: { id: this.post.uuid } });
                 NProgress.done();
             }
 
@@ -409,7 +420,7 @@ export default {
 
         async deletePost() {
             await this.request()
-                .delete(`/api/posts/${this.post.id}`)
+                .delete(`/api/posts/${this.post.uuid}`)
                 .then(() => {
                     this.$store.dispatch('search/buildIndex', true);
                     this.$toasted.show(this.trans.success, {

@@ -121,7 +121,7 @@
                             <router-link
                                 :to="{
                                     name: 'edit-post',
-                                    params: { id: post.id },
+                                    params: { id: post.uuid },
                                 }"
                                 class="text-decoration-none"
                             >

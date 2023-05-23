@@ -87,7 +87,7 @@ class TagControllerTest extends TestCase
     public function testStoreNewTag(): void
     {
         $data = [
-            'id' => Uuid::uuid4()->toString(),
+            'id' => 123,
             'name' => 'A new tag',
             'slug' => 'a-new-tag',
         ];

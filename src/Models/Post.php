@@ -2,6 +2,8 @@
 
 namespace Canvas\Models;
 
+use Canvas\Models\Traits\HasUniqueIds;
+use Canvas\Models\Traits\HasUuids;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,7 +14,7 @@ use Illuminate\Support\Str;
 
 class Post extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, HasUuids;
 
     /**
      * The table associated with the model.
@@ -34,20 +36,6 @@ class Post extends Model
      * @var string
      */
     protected $primaryKey = 'id';
-
-    /**
-     * The "type" of the auto-incrementing ID.
-     *
-     * @var string
-     */
-    protected $keyType = 'string';
-
-    /**
-     * Indicates if the IDs are auto-incrementing.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
 
     /**
      * The number of models to return for pagination.
@@ -129,13 +117,23 @@ class Post extends Model
     }
 
     /**
+     * Get the approver user relationship.
+     *
+     * @return BelongsTo
+     */
+    public function reviewer(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'reviewed_by');
+    }
+
+    /**
      * Get the views relationship.
      *
      * @return HasMany
      */
     public function views(): HasMany
     {
-        return $this->hasMany(View::class);
+        return $this->hasMany(View::class, 'post_id', 'uuid');
     }
 
     /**
@@ -217,5 +215,10 @@ class Post extends Model
             $post->tags()->detach();
             $post->topic()->detach();
         });
+    }
+
+    public function uniqueIds()
+    {
+        return ['uuid'];
     }
 }
