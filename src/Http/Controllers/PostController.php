@@ -113,7 +113,7 @@ class PostController extends Controller
 
             $oldPost->delete();
         } else if (! $post) {
-            $post = new Post(['id' => $id]);
+            $post = new Post(['uuid' => $id]);
         }
 
         $slug = $data['slug'];
@@ -123,7 +123,6 @@ class PostController extends Controller
                 $slug .= '-' . rand(0, 9999);
             }
         }
-        unset($data['id']);
         $post->fill(array_merge($data, [
             'slug' => $slug
         ]));

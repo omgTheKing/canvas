@@ -4,7 +4,7 @@
             <template slot="status">
                 <ul class="navbar-nav mr-auto flex-row float-right">
                     <li class="text-muted font-weight-bold">
-                        <div class="border-left pl-3 d-flex align-items-center" style="gap: 10px;">
+                        <div class="border-left pl-3 d-flex align-items-center" style="gap: 10px">
                             <div v-if="!isSaving && !isSaved">
                                 <span v-if="isPublished(post.published_at)">{{ trans.published }}</span>
                                 <span v-if="isDraft(post.published_at)">{{ trans.draft }}</span>
@@ -12,8 +12,12 @@
                             <span v-if="isSaving">{{ trans.saving }}</span>
                             <span v-if="isSaved" class="text-success">{{ trans.saved }}</span>
 
-                            <span v-if="!editDisabled && isPublished(post.approved_at)" class="btn btn-danger" @click="savePost(true)">Kaydet</span>
-
+                            <span
+                                v-if="!editDisabled && isPublished(post.approved_at)"
+                                class="btn btn-danger"
+                                @click="savePost(true)"
+                                >Kaydet</span
+                            >
                         </div>
                     </li>
                 </ul>
@@ -83,11 +87,15 @@
                         >
                             {{ trans.convert_to_draft }}
                         </a>
-                        <a v-if="!editDisabled" href="#" class="dropdown-item" @click="showSettingsModal"> {{ trans.general_settings }} </a>
+                        <a v-if="!editDisabled" href="#" class="dropdown-item" @click="showSettingsModal">
+                            {{ trans.general_settings }}
+                        </a>
                         <a v-if="!editDisabled" href="#" class="dropdown-item" @click="showFeaturedImageModal">
                             {{ trans.featured_image }}
                         </a>
-                        <a v-if="!editDisabled" href="#" class="dropdown-item" @click="showSeoModal"> {{ trans.seo_settings }} </a>
+                        <a v-if="!editDisabled" href="#" class="dropdown-item" @click="showSeoModal">
+                            {{ trans.seo_settings }}
+                        </a>
                         <a
                             v-if="!creatingPost && (isEditor || isAdmin || !isPublished(post.published_at))"
                             href="#"
@@ -106,7 +114,7 @@
                 <div class="form-group my-3" v-if="editDisabled">
                     <div class="alert alert-danger w-100">
                         <p v-if="isContributor">Bu gönderi yayınlandığı için düzenleyemezsiniz!</p>
-                        <a v-else @click="editDisabled = false" style="cursor: pointer;">Düzenleme kilidini aç</a>
+                        <a v-else @click="editDisabled = false" style="cursor: pointer">Düzenleme kilidini aç</a>
                     </div>
                 </div>
                 <div class="form-group my-3" v-if="!editDisabled">
@@ -290,7 +298,6 @@ export default {
 
     methods: {
         fetchPost() {
-            console.log(this.uri)
             return this.request()
                 .get(`/api/posts/${this.uri}`)
                 .then(({ data }) => {
@@ -332,9 +339,10 @@ export default {
             this.savePost();
         },
 
-        updateApprovedAt() {
+        async updateApprovedAt() {
             this.post.approved_at = moment().format('YYYY-MM-DD HH:mm:ss');
-            this.savePost();
+            await this.savePost(true);
+            this.editDisabled = true;
         },
 
         updateSlug(slug) {
