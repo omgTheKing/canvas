@@ -101,8 +101,9 @@ class PostController extends Controller
                     ->where('uuid', $id)
                     ->first();
 
-        abort_if($user->isContributor && $post !== null && !empty($post->approved_at), 403, 'Contributors can\'t update approved posts.');
-        abort_if(!$user->isAdmin && $post?->user_id === $user->id, 403, 'users can\'t review their own posts');
+        abort_if(!empty($post->approved_at) && $user->isContributor && $post !== null, 403, 'Contributors can\'t update approved posts.');
+        abort_if(!empty($post->approved_at) && $request->filled('approved_at') && !$user->isAdmin && $post?->user_id === $user->id, 403, 'users can\'t review their own posts');
+        abort_if(!empty($post->published_at) && $request->filled('published_at') && $user->isContributor, 403, 'contributors can\'t update published posts');
 
         $isReview = $post?->approved_at !== null;
         if ($isReview) {

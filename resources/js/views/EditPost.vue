@@ -113,8 +113,14 @@
             <div class="col-xl-8 offset-xl-2 col-lg-10 offset-lg-1 col-md-12">
                 <div class="form-group my-3" v-if="editDisabled">
                     <div class="alert alert-danger w-100">
-                        <p v-if="isContributor">Bu gönderi yayınlandığı için düzenleyemezsiniz!</p>
-                        <a v-else @click="editDisabled = false" style="cursor: pointer">Düzenleme kilidini aç</a>
+                        <span v-if="isContributor">Bu gönderi yayınlandığı için düzenleyemezsiniz!</span>
+                        <a
+                            v-else-if="isAdmin || post.user_id != user.id"
+                            @click="editDisabled = false"
+                            style="cursor: pointer"
+                            >Düzenleme kilidini aç</a
+                        >
+                        <span v-else>Bu gönderiyi düzenleyemezsiniz!</span>
                     </div>
                 </div>
                 <div class="form-group my-3" v-if="!editDisabled">
@@ -182,7 +188,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 import $ from 'jquery';
 import DeleteModal from '../components/modals/DeleteModal';
 import FeaturedImageModal from '../components/modals/FeaturedImageModal';
@@ -256,6 +262,10 @@ export default {
             isContributor: 'settings/isContributor',
         }),
 
+        user() {
+            return this.$store.state.settings.user;
+        },
+
         creatingPost() {
             return this.$route.name === 'create-post';
         },
@@ -316,10 +326,11 @@ export default {
                     this.post.meta.canonical_link = get(data.post.meta, 'canonical_link', '');
                     this.post.tags = get(data.post, 'tags', []);
                     this.post.topic = get(data.post, 'topic', []);
+                    this.post.user_id = get(data.post, 'user_id', null);
 
                     this.tags = get(data, 'tags', []);
                     this.topics = get(data, 'topics', []);
-                    this.editDisabled = !!this.post.approved_at;
+                    this.editDisabled = !!this.post.approved_at || (this.isContributor && !!this.post.published_at);
 
                     NProgress.inc();
                 })
@@ -331,11 +342,13 @@ export default {
         convertToDraft() {
             this.post.published_at = null;
             this.post.approved_at = null;
+            this.editDisabled = false;
             this.savePost();
         },
 
         updatePublishedAt() {
             this.post.published_at = moment().format('YYYY-MM-DD HH:mm:ss');
+            this.editDisabled = this.isContributor;
             this.savePost();
         },
 
