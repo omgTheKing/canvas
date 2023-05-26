@@ -77,7 +77,7 @@ class PostController extends Controller
         ]);
     }
 
-    /**
+    /*
      * Store a newly created resource in storage.
      *
      * @param  PostRequest  $request
@@ -124,6 +124,16 @@ class PostController extends Controller
                 $slug .= '-' . rand(0, 9999);
             }
         }
+
+        // published_at and approved_at being broke from client due timezone issue db <-> laravel <-> client
+        // this is the easy way to fix. ignore new value if published_at already not empty
+        if (!empty($data['published_at']) && !empty($post->published_at)) {
+            unset($data['published_at']);
+        }
+        if (!empty($data['approved_at']) && !empty($post->approved_at)) {
+            unset($data['approved_at']);
+        }
+
         $post->fill(array_merge($data, [
             'slug' => $slug
         ]));
@@ -183,13 +193,10 @@ class PostController extends Controller
         $post = Post::query()
                     ->when(request()->user('canvas')->isContributor, function (Builder $query) {
                         return $query->where('user_id', request()->user('canvas')->id);
-                    }, function (Builder $query) {
-                        return $query;
                     })
                     ->with('tags:name,slug', 'topic:name,slug')
                     ->where('uuid', $id)
                     ->firstOrFail();
-
         return response()->json([
             'post' => $post,
             'tags' => Tag::query()->get(['name', 'slug']),

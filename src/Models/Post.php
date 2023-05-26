@@ -59,8 +59,8 @@ class Post extends Model
      * @var array
      */
     protected $casts = [
-        'published_at' => 'datetime:Y-m-d',
-        'approved_at' => 'datetime:Y-m-d',
+        'published_at' => 'datetime',
+        'approved_at' => 'datetime',
         'meta' => 'array',
     ];
 
@@ -177,7 +177,7 @@ class Post extends Model
      */
     public function scopePublished(Builder $query): Builder
     {
-        return $query->where('published_at', '<=', now()->toDateTimeString())->whereNull('approved_at');
+        return $query->whereNotNull('published_at')->whereNull('approved_at');
     }
 
     /**
@@ -188,7 +188,7 @@ class Post extends Model
      */
     public function scopeApproved(Builder $query): Builder
     {
-        return $query->where('approved_at', '<=', now()->toDateTimeString());
+        return $query->whereNotNull('approved_at');
     }
 
     /**
@@ -199,7 +199,7 @@ class Post extends Model
      */
     public function scopeDraft(Builder $query): Builder
     {
-        return $query->where('published_at', '=', null)->orWhere('published_at', '>', now()->toDateTimeString());
+        return $query->whereNull('published_at');
     }
 
     /**

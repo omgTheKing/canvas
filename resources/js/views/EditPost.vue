@@ -347,13 +347,13 @@ export default {
         },
 
         updatePublishedAt() {
-            this.post.published_at = moment().format('YYYY-MM-DD HH:mm:ss');
+            this.post.published_at = moment().utc().format('YYYY-MM-DD HH:mm:ss');
             this.editDisabled = this.isContributor;
             this.savePost();
         },
 
         async updateApprovedAt() {
-            this.post.approved_at = moment().format('YYYY-MM-DD HH:mm:ss');
+            this.post.approved_at = moment().utc().format('YYYY-MM-DD HH:mm:ss');
             await this.savePost(true);
             this.editDisabled = true;
         },
