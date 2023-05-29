@@ -107,7 +107,7 @@ class TopicControllerTest extends TestCase
             'id' => Uuid::uuid4()->toString(),
             'name' => 'A deleted topic',
             'slug' => 'a-deleted-topic',
-            'user_id' => $this->editor->id,
+            'blogger_id' => $this->editor->id,
             'deleted_at' => now(),
         ]);
 

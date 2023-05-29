@@ -49,25 +49,25 @@ class PostTest extends TestCase
         ];
 
         $primaryPost = factory(Post::class)->create([
-            'user_id' => $this->admin->id,
+            'blogger_id' => $this->admin->id,
         ]);
         $response = $this->actingAs($this->admin, 'canvas')->postJson("/canvas/api/posts/{$primaryPost->id}", $data);
 
         $this->assertDatabaseHas('blog_posts', [
             'id' => $response->original['id'],
             'slug' => $response->original['slug'],
-            'user_id' => $response->original['user_id'],
+            'blogger_id' => $response->original['blogger_id'],
         ]);
 
         $secondaryPost = factory(Post::class)->create([
-            'user_id' => $this->editor->id,
+            'blogger_id' => $this->editor->id,
         ]);
         $response = $this->actingAs($this->editor, 'canvas')->postJson("/canvas/api/posts/{$secondaryPost->id}", $data);
 
         $this->assertDatabaseHas('blog_posts', [
             'id' => $response->original['id'],
             'slug' => $response->original['slug'],
-            'user_id' => $response->original['user_id'],
+            'blogger_id' => $response->original['blogger_id'],
         ]);
     }
 
@@ -116,7 +116,7 @@ class PostTest extends TestCase
     public function testPublishedScope(): void
     {
         factory(Post::class)->create([
-            'user_id' => $this->admin->id,
+            'blogger_id' => $this->admin->id,
             'published_at' => now()->subDay(),
         ]);
 
@@ -127,7 +127,7 @@ class PostTest extends TestCase
     public function testDraftScope(): void
     {
         factory(Post::class)->create([
-            'user_id' => $this->admin->id,
+            'blogger_id' => $this->admin->id,
             'published_at' => now()->addDay(),
         ]);
 

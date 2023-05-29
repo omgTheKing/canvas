@@ -24,14 +24,14 @@ class PostControllerTest extends TestCase
     public function testPublishedPostsAreFetchedByDefault(): void
     {
         $primaryPost = factory(Post::class, 1)->create([
-            'user_id' => $this->admin->id,
+            'blogger_id' => $this->admin->id,
             'published_at' => now()->subDay(),
         ])->each(function ($post) {
             $post->views()->createMany(factory(View::class, 3)->make()->toArray());
         })->first();
 
         $secondaryPost = factory(Post::class, 1)->create([
-            'user_id' => $this->admin->id,
+            'blogger_id' => $this->admin->id,
             'published_at' => null,
         ])->each(function ($post) {
             $post->views()->createMany(factory(View::class, 3)->make()->toArray());
@@ -59,14 +59,14 @@ class PostControllerTest extends TestCase
     public function testPublishedPostsCanBeFetchedWithAGivenQueryType(): void
     {
         $primaryPost = factory(Post::class, 1)->create([
-            'user_id' => $this->admin->id,
+            'blogger_id' => $this->admin->id,
             'published_at' => now()->subDay(),
         ])->each(function ($post) {
             $post->views()->createMany(factory(View::class, 3)->make()->toArray());
         })->first();
 
         $secondaryPost = factory(Post::class, 1)->create([
-            'user_id' => $this->admin->id,
+            'blogger_id' => $this->admin->id,
             'published_at' => null,
         ])->each(function ($post) {
             $post->views()->createMany(factory(View::class, 3)->make()->toArray());
@@ -94,14 +94,14 @@ class PostControllerTest extends TestCase
     public function testDraftPostsCanBeFetchedWithAGivenQueryType(): void
     {
         $primaryPost = factory(Post::class, 1)->create([
-            'user_id' => $this->admin->id,
+            'blogger_id' => $this->admin->id,
             'published_at' => now()->subDay(),
         ])->each(function ($post) {
             $post->views()->createMany(factory(View::class, 3)->make()->toArray());
         })->first();
 
         $secondaryPost = factory(Post::class, 1)->create([
-            'user_id' => $this->admin->id,
+            'blogger_id' => $this->admin->id,
             'published_at' => null,
         ])->each(function ($post) {
             $post->views()->createMany(factory(View::class, 3)->make()->toArray());
@@ -129,14 +129,14 @@ class PostControllerTest extends TestCase
     public function testUserPostsAreFetchedByDefault(): void
     {
         $primaryPost = factory(Post::class, 1)->create([
-            'user_id' => $this->admin->id,
+            'blogger_id' => $this->admin->id,
             'published_at' => now()->subDay(),
         ])->each(function ($post) {
             $post->views()->createMany(factory(View::class, 3)->make()->toArray());
         })->first();
 
         $secondaryPost = factory(Post::class, 1)->create([
-            'user_id' => $this->editor->id,
+            'blogger_id' => $this->editor->id,
             'published_at' => now()->subDay(),
         ])->each(function ($post) {
             $post->views()->createMany(factory(View::class, 3)->make()->toArray());
@@ -164,14 +164,14 @@ class PostControllerTest extends TestCase
     public function testAllPostsCanBeFetchedWithAGivenQueryScope(): void
     {
         factory(Post::class, 2)->create([
-            'user_id' => $this->admin->id,
+            'blogger_id' => $this->admin->id,
             'published_at' => now()->subDay(),
         ])->each(function ($post) {
             $post->views()->createMany(factory(View::class, 3)->make()->toArray());
         })->first();
 
         factory(Post::class, 2)->create([
-            'user_id' => $this->admin->id,
+            'blogger_id' => $this->admin->id,
             'published_at' => now()->subDay(),
         ])->each(function ($post) {
             $post->views()->createMany(factory(View::class, 3)->make()->toArray());
@@ -196,14 +196,14 @@ class PostControllerTest extends TestCase
     public function testUserPostsCanBeFetchedWithAGivenQueryScope(): void
     {
         factory(Post::class, 2)->create([
-            'user_id' => $this->admin->id,
+            'blogger_id' => $this->admin->id,
             'published_at' => now()->subDay(),
         ])->each(function ($post) {
             $post->views()->createMany(factory(View::class, 3)->make()->toArray());
         })->first();
 
         factory(Post::class, 2)->create([
-            'user_id' => $this->editor->id,
+            'blogger_id' => $this->editor->id,
             'published_at' => now()->subDay(),
         ])->each(function ($post) {
             $post->views()->createMany(factory(View::class, 3)->make()->toArray());
@@ -256,7 +256,7 @@ class PostControllerTest extends TestCase
     public function testAnAdminCanFetchStatsForAnyPost(): void
     {
         $post = factory(Post::class)->create([
-            'user_id' => $this->contributor->id,
+            'blogger_id' => $this->contributor->id,
             'published_at' => now()->subWeek(),
             'body' => null,
         ]);
@@ -292,7 +292,7 @@ class PostControllerTest extends TestCase
     public function testAnEditorCanFetchAnyPostStats(): void
     {
         $post = factory(Post::class)->create([
-            'user_id' => $this->contributor->id,
+            'blogger_id' => $this->contributor->id,
         ]);
 
         $this->actingAs($this->editor, 'canvas')
@@ -319,7 +319,7 @@ class PostControllerTest extends TestCase
     public function testAContributorCanFetchTheirOwnPostStats(): void
     {
         $post = factory(Post::class)->create([
-            'user_id' => $this->contributor->id,
+            'blogger_id' => $this->contributor->id,
         ]);
 
         $this->actingAs($this->contributor, 'canvas')
@@ -346,7 +346,7 @@ class PostControllerTest extends TestCase
     public function testAContributorIsUnableToAccessStatsForAnotherUser(): void
     {
         $post = factory(Post::class)->create([
-            'user_id' => $this->admin->id,
+            'blogger_id' => $this->admin->id,
         ]);
 
         $this->actingAs($this->contributor, 'canvas')
@@ -386,7 +386,7 @@ class PostControllerTest extends TestCase
     public function testContributorAccessRestricted(): void
     {
         $post = factory(Post::class)->create([
-            'user_id' => $this->admin->id,
+            'blogger_id' => $this->admin->id,
         ]);
 
         $this->actingAs($this->contributor, 'canvas')
@@ -409,7 +409,7 @@ class PostControllerTest extends TestCase
                  'id' => $data['id'],
                  'slug' => $data['slug'],
                  'title' => $data['title'],
-                 'user_id' => $this->admin->id,
+                 'blogger_id' => $this->admin->id,
              ]);
     }
 
@@ -435,7 +435,7 @@ class PostControllerTest extends TestCase
     public function testAContributorCanOnlyUpdateTheirOwnPost(): void
     {
         $post = factory(Post::class)->create([
-            'user_id' => $this->contributor->id,
+            'blogger_id' => $this->contributor->id,
         ]);
 
         $data = [
@@ -600,7 +600,7 @@ class PostControllerTest extends TestCase
     public function testDeleteExistingPost(): void
     {
         $post = factory(Post::class)->create([
-            'user_id' => $this->editor->id,
+            'blogger_id' => $this->editor->id,
             'slug' => 'a-new-post',
         ]);
 
@@ -626,7 +626,7 @@ class PostControllerTest extends TestCase
     public function testDeSyncRelatedTaxonomy(): void
     {
         $post = factory(Post::class)->create([
-            'user_id' => $this->admin->id,
+            'blogger_id' => $this->admin->id,
             'slug' => 'a-new-post',
         ]);
 

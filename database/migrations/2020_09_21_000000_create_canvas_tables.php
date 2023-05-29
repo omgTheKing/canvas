@@ -35,14 +35,14 @@ class CreateCanvasTables extends Migration
             $table->string('slug')->index();
             $table->string('title');
             $table->text('summary')->nullable();
-            $table->text('body')->nullable();
+            $table->mediumText('body')->nullable();
             $table->dateTime('published_at')->nullable()->comment('yayına sunduğu tarih');
             $table->dateTime('approved_at')->nullable()->comment('editör yayınladığı tarih');
             $table->foreignId('approved_by')->nullable()->constrained('blog_users')->nullOnDelete();
             $table->foreignId('reviewed_by')->nullable()->constrained('blog_users')->nullOnDelete();
             $table->string('featured_image')->nullable();
             $table->string('featured_image_caption')->nullable();
-            $table->foreignId('user_id')->nullable()->constrained('blog_users')->nullOnDelete();
+            $table->foreignId('blogger_id')->nullable()->constrained('blog_users')->nullOnDelete();
             $table->json('meta')->nullable();
             $table->integer('view_count')->default(0);
             $table->timestamps();
@@ -53,22 +53,25 @@ class CreateCanvasTables extends Migration
             $table->id();
             $table->string('slug');
             $table->string('name');
-            $table->foreignId('user_id')->nullable()->constrained('blog_users')->nullOnDelete();
+            $table->foreignId('blogger_id')->nullable()->constrained('blog_users')->nullOnDelete();
             $table->timestamps();
             $table->softDeletes();
             $table->index('created_at');
-            $table->unique(['slug', 'user_id']);
+            $table->unique(['slug', 'blogger_id']);
         });
 
         Schema::create('blog_topics', function (Blueprint $table) {
             $table->id();
             $table->string('slug');
             $table->string('name');
-            $table->foreignId('user_id')->nullable()->constrained('blog_users')->nullOnDelete();
+            $table->string('banner')->nullable();
+            $table->foreignId('blogger_id')->nullable()->constrained('blog_users')->nullOnDelete();
+            $table->boolean('is_active')->default(false);
+            $table->integer('order')->default(0);
             $table->timestamps();
             $table->softDeletes();
             $table->index('created_at');
-            $table->unique(['slug', 'user_id']);
+            $table->unique(['slug', 'blogger_id']);
         });
 
         Schema::create('blog_posts_tags', function (Blueprint $table) {

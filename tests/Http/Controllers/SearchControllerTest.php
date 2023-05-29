@@ -20,11 +20,11 @@ class SearchControllerTest extends TestCase
     public function testAContributorCanOnlySearchTheirOwnPosts(): void
     {
         factory(Post::class, 3)->create([
-            'user_id' => $this->contributor->id,
+            'blogger_id' => $this->contributor->id,
         ]);
 
         factory(Post::class)->create([
-            'user_id' => $this->admin->id,
+            'blogger_id' => $this->admin->id,
         ]);
 
         $response = $this->actingAs($this->contributor, 'canvas')
@@ -44,11 +44,11 @@ class SearchControllerTest extends TestCase
     public function testAnEditorCanSearchAllPosts(): void
     {
         factory(Post::class, 3)->create([
-            'user_id' => $this->editor->id,
+            'blogger_id' => $this->editor->id,
         ]);
 
         factory(Post::class)->create([
-            'user_id' => $this->contributor->id,
+            'blogger_id' => $this->contributor->id,
         ]);
 
         $response = $this->actingAs($this->editor, 'canvas')
@@ -68,11 +68,11 @@ class SearchControllerTest extends TestCase
     public function testAnAdminCanSearchAllPosts(): void
     {
         factory(Post::class, 3)->create([
-            'user_id' => $this->editor->id,
+            'blogger_id' => $this->editor->id,
         ]);
 
         factory(Post::class)->create([
-            'user_id' => $this->contributor->id,
+            'blogger_id' => $this->contributor->id,
         ]);
 
         $response = $this->actingAs($this->admin, 'canvas')

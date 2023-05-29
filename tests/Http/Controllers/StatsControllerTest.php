@@ -20,13 +20,13 @@ class StatsControllerTest extends TestCase
     public function testUserStatsAreFetchedByDefault(): void
     {
         factory(Post::class, 3)->create([
-            'user_id' => $this->admin->id,
+            'blogger_id' => $this->admin->id,
         ])->each(function ($post) {
             $post->views()->createMany(factory(View::class, 3)->make()->toArray());
         });
 
         factory(Post::class, 2)->create([
-            'user_id' => $this->contributor->id,
+            'blogger_id' => $this->contributor->id,
         ])->each(function ($post) {
             $post->views()->createMany(factory(View::class, 2)->make()->toArray());
         });
@@ -48,13 +48,13 @@ class StatsControllerTest extends TestCase
     public function testAllPostStatsCanBeFetchedWithAGivenQueryScope(): void
     {
         factory(Post::class, 3)->create([
-            'user_id' => $this->admin->id,
+            'blogger_id' => $this->admin->id,
         ])->each(function ($post) {
             $post->views()->createMany(factory(View::class, 3)->make()->toArray());
         });
 
         factory(Post::class, 2)->create([
-            'user_id' => $this->contributor->id,
+            'blogger_id' => $this->contributor->id,
         ])->each(function ($post) {
             $post->views()->createMany(factory(View::class, 2)->make()->toArray());
         });

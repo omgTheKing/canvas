@@ -28,21 +28,21 @@ class TopicTest extends TestCase
         ];
 
         $primaryTopic = factory(Topic::class)->create([
-            'user_id' => $this->admin->id,
+            'blogger_id' => $this->admin->id,
         ]);
         $response = $this->actingAs($this->admin, 'canvas')->postJson("/canvas/api/topics/{$primaryTopic->id}", $data);
 
         $this->assertDatabaseHas('blog_topics', [
             'id' => $response->original['id'],
             'slug' => $response->original['slug'],
-            'user_id' => $response->original['user_id'],
+            'blogger_id' => $response->original['blogger_id'],
         ]);
 
         $secondaryAdmin = factory(User::class)->create([
             'role' => User::ADMIN,
         ]);
         $secondaryTopic = factory(Topic::class)->create([
-            'user_id' => $secondaryAdmin->id,
+            'blogger_id' => $secondaryAdmin->id,
         ]);
 
         $response = $this->actingAs($secondaryAdmin, 'canvas')->postJson("/canvas/api/topics/{$secondaryTopic->id}", $data);
@@ -50,7 +50,7 @@ class TopicTest extends TestCase
         $this->assertDatabaseHas('blog_topics', [
             'id' => $response->original['id'],
             'slug' => $response->original['slug'],
-            'user_id' => $response->original['user_id'],
+            'blogger_id' => $response->original['blogger_id'],
         ]);
     }
 

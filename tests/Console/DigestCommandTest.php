@@ -28,7 +28,7 @@ class DigestCommandTest extends TestCase
         ]);
 
         $posts = factory(Post::class, 2)->create([
-            'user_id' => $user->id,
+            'blogger_id' => $user->id,
             'published_at' => now()->subWeek(),
         ]);
 
@@ -66,7 +66,7 @@ class DigestCommandTest extends TestCase
         ]);
 
         $posts = factory(Post::class, 2)->create([
-            'user_id' => $user->id,
+            'blogger_id' => $user->id,
             'published_at' => now()->subWeek(),
         ]);
 

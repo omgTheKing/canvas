@@ -62,7 +62,7 @@ class TagController extends Controller
 
         $tag->fill($data);
 
-        $tag->user_id = $tag->user_id ?? request()->user('canvas')->id;
+        $tag->blogger_id = $tag->blogger_id ?? request()->user('canvas')->id;
 
         $tag->save();
 

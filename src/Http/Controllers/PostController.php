@@ -27,7 +27,7 @@ class PostController extends Controller
         $posts = Post::query()
                     ->select('id', 'uuid', 'title', 'summary', 'featured_image', 'published_at', 'created_at', 'updated_at')
                      ->when(request()->user('canvas')->isContributor || request()->query('scope', 'user') != 'all', function (Builder $query) {
-                         return $query->where('user_id', request()->user('canvas')->id);
+                         return $query->where('blogger_id', request()->user('canvas')->id);
                      })
                      ->when($type == 'published', function (Builder $query) {
                          return $query->published();
@@ -44,7 +44,7 @@ class PostController extends Controller
 
         $basePostQuery =  Post::query()
             ->when(request()->user('canvas')->isContributor || request()->query('scope', 'user') != 'all', function (Builder $query) {
-                return $query->where('user_id', request()->user('canvas')->id);
+                return $query->where('blogger_id', request()->user('canvas')->id);
             });
         $draftCount = $basePostQuery->clone()->draft()->count();
         $publishedCount = $basePostQuery->clone()->published()->count();
@@ -93,7 +93,7 @@ class PostController extends Controller
 
         $post = Post::query()
                     ->when($user->isContributor, function (Builder $query) {
-                        return $query->where('user_id', request()->user('canvas')->id);
+                        return $query->where('blogger_id', request()->user('canvas')->id);
                     }, function (Builder $query) {
                         return $query;
                     })
@@ -102,7 +102,7 @@ class PostController extends Controller
                     ->first();
 
         abort_if(!empty($post->approved_at) && $user->isContributor && $post !== null, 403, 'Contributors can\'t update approved posts.');
-        abort_if(!empty($post->approved_at) && $request->filled('approved_at') && !$user->isAdmin && $post?->user_id === $user->id, 403, 'users can\'t review their own posts');
+        abort_if(!empty($post->approved_at) && $request->filled('approved_at') && !$user->isAdmin && $post?->blogger_id === $user->id, 403, 'users can\'t review their own posts');
         abort_if(!empty($post->published_at) && $request->filled('published_at') && $user->isContributor, 403, 'contributors can\'t update published posts');
 
         $isReview = $post?->approved_at !== null;
@@ -138,7 +138,7 @@ class PostController extends Controller
             'slug' => $slug
         ]));
 
-        $post->user_id ??= $user->id;
+        $post->blogger_id ??= $user->id;
         if ($isReview) {
             $post->reviewed_by = $user->id;
         }
@@ -154,7 +154,7 @@ class PostController extends Controller
                 $tag = Tag::create([
                     'name' => $item['name'],
                     'slug' => $item['slug'],
-                    'user_id' => request()->user('canvas')->id,
+                    'blogger_id' => request()->user('canvas')->id,
                 ]);
             }
 
@@ -168,7 +168,7 @@ class PostController extends Controller
                 $topic = Topic::create([
                     'name' => $item['name'],
                     'slug' => $item['slug'],
-                    'user_id' => request()->user('canvas')->id,
+                    'blogger_id' => request()->user('canvas')->id,
                 ]);
             }
 
@@ -192,7 +192,7 @@ class PostController extends Controller
     {
         $post = Post::query()
                     ->when(request()->user('canvas')->isContributor, function (Builder $query) {
-                        return $query->where('user_id', request()->user('canvas')->id);
+                        return $query->where('blogger_id', request()->user('canvas')->id);
                     })
                     ->with('tags:name,slug', 'topic:name,slug')
                     ->where('uuid', $id)
@@ -214,7 +214,7 @@ class PostController extends Controller
     {
         $post = Post::query()
                     ->when(request()->user('canvas')->isContributor, function (Builder $query) {
-                        return $query->where('user_id', request()->user('canvas')->id);
+                        return $query->where('blogger_id', request()->user('canvas')->id);
                     }, function (Builder $query) {
                         return $query;
                     })
@@ -241,7 +241,7 @@ class PostController extends Controller
     {
         $post = Post::query()
                     ->when(request()->user('canvas')->isContributor, function (Builder $query) {
-                        return $query->where('user_id', request()->user('canvas')->id);
+                        return $query->where('blogger_id', request()->user('canvas')->id);
                     }, function (Builder $query) {
                         return $query;
                     })

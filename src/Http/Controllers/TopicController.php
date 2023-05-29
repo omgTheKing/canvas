@@ -62,7 +62,7 @@ class TopicController extends Controller
 
         $topic->fill($data);
 
-        $topic->user_id = $topic->user_id ?? request()->user('canvas')->id;
+        $topic->blogger_id = $topic->blogger_id ?? request()->user('canvas')->id;
 
         $topic->save();
 

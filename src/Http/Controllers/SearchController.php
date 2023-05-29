@@ -22,7 +22,7 @@ class SearchController extends Controller
         $posts = Post::query()
                      ->select('id', 'uuid', 'title')
                      ->when(request()->user('canvas')->isContributor, function (Builder $query) {
-                         return $query->where('user_id', request()->user('canvas')->id);
+                         return $query->where('blogger_id', request()->user('canvas')->id);
                      }, function (Builder $query) {
                          return $query;
                      })

@@ -61,7 +61,7 @@ class UserTest extends TestCase
     public function testPostsRelationship(): void
     {
         factory(Post::class)->create([
-            'user_id' => $this->admin->id,
+            'blogger_id' => $this->admin->id,
         ]);
 
         $this->assertInstanceOf(HasMany::class, $this->admin->posts());
@@ -71,7 +71,7 @@ class UserTest extends TestCase
     public function testTagsRelationship(): void
     {
         factory(Tag::class)->create([
-            'user_id' => $this->admin->id,
+            'blogger_id' => $this->admin->id,
         ]);
 
         $this->assertInstanceOf(HasMany::class, $this->admin->tags());
@@ -81,7 +81,7 @@ class UserTest extends TestCase
     public function testTopicsRelationship(): void
     {
         factory(Topic::class)->create([
-            'user_id' => $this->admin->id,
+            'blogger_id' => $this->admin->id,
         ]);
 
         $this->assertInstanceOf(HasMany::class, $this->admin->topics());

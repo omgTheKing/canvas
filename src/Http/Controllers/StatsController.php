@@ -21,7 +21,7 @@ class StatsController extends Controller
                      ->when(request()->query('scope', 'user') === 'all', function (Builder $query) {
                          return $query;
                      }, function (Builder $query) {
-                         return $query->where('user_id', request()->user('canvas')->id);
+                         return $query->where('blogger_id', request()->user('canvas')->id);
                      })
                      ->withCount('views')
                      ->approved()

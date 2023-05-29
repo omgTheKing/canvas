@@ -30,7 +30,7 @@ class TopicRequest extends FormRequest
                 'required',
                 'alpha_dash',
                 Rule::unique('blog_topics')->where(function ($query) {
-                    return $query->where('slug', request('slug'))->where('user_id', request()->user('canvas')->id);
+                    return $query->where('slug', request('slug'))->where('blogger_id', request()->user('canvas')->id);
                 })->ignore(request('id'))->whereNull('deleted_at'),
             ],
         ];

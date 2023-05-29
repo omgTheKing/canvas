@@ -54,7 +54,7 @@ class UserControllerTest extends TestCase
     public function testListPostsForUser(): void
     {
         $post = factory(Post::class)->create([
-            'user_id' => $this->admin->id,
+            'blogger_id' => $this->admin->id,
         ]);
 
         factory(View::class)->create([

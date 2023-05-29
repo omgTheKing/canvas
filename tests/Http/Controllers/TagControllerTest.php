@@ -107,7 +107,7 @@ class TagControllerTest extends TestCase
             'id' => Uuid::uuid4()->toString(),
             'name' => 'A deleted tag',
             'slug' => 'a-deleted-tag',
-            'user_id' => $this->editor->id,
+            'blogger_id' => $this->editor->id,
             'deleted_at' => now(),
         ]);
 
