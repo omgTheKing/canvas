@@ -3,6 +3,8 @@
 namespace Canvas\Http\Controllers;
 
 use Canvas\Canvas;
+use Canvas\Events\FileUploaded;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Storage;
 
@@ -23,11 +25,13 @@ class UploadsController extends Controller
 
         // Only grab the first element because single file uploads
         // are not supported at this time
+        /** @var UploadedFile $file */
         $file = reset($payload);
 
         $path = $file->storePublicly(Canvas::baseStoragePath(), [
             'disk' => config('canvas.storage_disk'),
         ]);
+        event(new FileUploaded($path, $file->getClientMimeType(), $file->getSize()));
 
         return Storage::disk(config('canvas.storage_disk'))->url($path);
     }
