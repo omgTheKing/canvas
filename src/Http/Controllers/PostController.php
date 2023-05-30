@@ -25,7 +25,7 @@ class PostController extends Controller
     {
         $type = request()->query('type', 'approved');
         $posts = Post::query()
-                    ->select('id', 'uuid', 'title', 'summary', 'featured_image', 'published_at', 'created_at', 'updated_at')
+                    ->select('id', 'uuid', 'title', 'summary', 'featured_image', 'published_at', 'created_at', 'updated_at', 'view_count')
                      ->when(request()->user('canvas')->isContributor || request()->query('scope', 'user') != 'all', function (Builder $query) {
                          return $query->where('blogger_id', request()->user('canvas')->id);
                      })
@@ -39,7 +39,6 @@ class PostController extends Controller
                         return $query->approved();
                     })
                      ->latest()
-                     ->withCount('views')
                      ->paginate();
 
         $basePostQuery =  Post::query()

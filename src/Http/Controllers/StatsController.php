@@ -23,7 +23,6 @@ class StatsController extends Controller
                      }, function (Builder $query) {
                          return $query->where('blogger_id', request()->user('canvas')->id);
                      })
-                     ->withCount('views')
                      ->approved()
                      ->latest()
                      ->get();

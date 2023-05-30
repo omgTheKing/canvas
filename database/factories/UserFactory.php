@@ -2,6 +2,7 @@
 
 /* @var \Illuminate\Database\Eloquent\Factory $factory */
 
+use Canvas\Canvas;
 use Illuminate\Support\Str;
 
 $factory->define(\Canvas\Models\User::class, function (Faker\Generator $faker) {
@@ -11,7 +12,7 @@ $factory->define(\Canvas\Models\User::class, function (Faker\Generator $faker) {
         'username' => Str::slug($faker->userName),
         'password' => bcrypt($faker->password),
         'summary' => $faker->sentence,
-        'avatar' => md5(trim(Str::lower($faker->email))),
+        'avatar' => Canvas::gravatar($faker->email),
         'dark_mode' => $faker->numberBetween(0, 1),
         'digest' => $faker->numberBetween(0, 1),
         'locale' => $faker->locale,

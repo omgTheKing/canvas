@@ -78,7 +78,7 @@
                                         <div class="ml-auto">
                                             <div class="d-none d-md-inline">
                                                 <span class="text-muted mr-3"
-                                                    >{{ suffixedNumber(post.views_count) }} {{ trans.views }}</span
+                                                    >{{ suffixedNumber(post.view_count) }} {{ trans.views }}</span
                                                 >
                                                 <span class="mr-3"
                                                     >{{ trans.created }}

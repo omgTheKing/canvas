@@ -115,7 +115,7 @@
                     <div class="alert alert-danger w-100">
                         <span v-if="isContributor">Bu gönderi yayınlandığı için düzenleyemezsiniz!</span>
                         <a
-                            v-else-if="isAdmin || post.user_id != user.id"
+                            v-else-if="isAdmin || post.blogger_id != user.id"
                             @click="editDisabled = false"
                             style="cursor: pointer"
                             >Düzenleme kilidini aç</a
@@ -326,7 +326,7 @@ export default {
                     this.post.meta.canonical_link = get(data.post.meta, 'canonical_link', '');
                     this.post.tags = get(data.post, 'tags', []);
                     this.post.topic = get(data.post, 'topic', []);
-                    this.post.user_id = get(data.post, 'user_id', null);
+                    this.post.blogger_id = get(data.post, 'blogger_id', null);
 
                     this.tags = get(data, 'tags', []);
                     this.topics = get(data, 'topics', []);

@@ -306,7 +306,7 @@ export default {
         }),
 
         canEditPost() {
-            return this.settings.user.id == this.data.post.user_id;
+            return this.settings.user.id == this.data.post.blogger_id;
         },
 
         viewsAreTrendingUp() {

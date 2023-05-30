@@ -182,7 +182,7 @@ export default {
             let tag = {
                 name: string,
                 slug: strings.methods.slugify(string),
-                user_id: this.settings.user.id,
+                blogger_id: this.settings.user.id,
             };
 
             this.$emit('add-post-tag', tag);
@@ -194,7 +194,7 @@ export default {
             let topic = {
                 name: string,
                 slug: strings.methods.slugify(string),
-                user_id: this.settings.user.id,
+                blogger_id: this.settings.user.id,
             };
 
             this.$emit('add-post-topic', topic);
