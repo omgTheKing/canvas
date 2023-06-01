@@ -7,7 +7,6 @@ use Canvas\Models\Tag;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
-use Ramsey\Uuid\Uuid;
 
 class TagController extends Controller
 {
@@ -34,7 +33,9 @@ class TagController extends Controller
      */
     public function create(): JsonResponse
     {
-        return response()->json(Tag::query()->make(), 200);
+        return response()->json(Tag::query()->make([
+            'id' => rand(Tag::count() + 10, 200)
+        ]), 200);
     }
 
     /**

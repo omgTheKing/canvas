@@ -78,7 +78,12 @@ class UserController extends Controller
             $data['locale'] = config('app.fallback_locale');
         }
 
-        unset($data['name'], $data['email'], $data['username'], $data['password'], $data['password_confirmation'], $data['summary']);
+        if (!$requestUser?->isAdmin) {
+            unset($data['name'], $data['email'], $data['username'],
+                $data['password'], $data['password_confirmation'], $data['summary'],
+                $data['avatar'], $data['role'],
+            );
+        }
         $user->fill($data);
 
         $user->save();

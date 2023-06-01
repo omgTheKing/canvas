@@ -217,7 +217,7 @@ class PostController extends Controller
                     }, function (Builder $query) {
                         return $query;
                     })
-                    ->published()
+                    ->approved()
                     ->where('uuid', $id)
                     ->firstOrFail();
 

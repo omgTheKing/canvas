@@ -21,7 +21,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div class="form-group row">
+                    <div class="form-group row" v-if="isEmpty(post.approved_at) || isAdmin">
                         <div class="col-12">
                             <label for="slug" class="font-weight-bold text-uppercase text-muted small">{{
                                 trans.slug
@@ -134,6 +134,7 @@ import Multiselect from 'vue-multiselect';
 import Tooltip from '../../directives/Tooltip';
 import debounce from 'lodash/debounce';
 import strings from '../../mixins/strings';
+import isEmpty from 'lodash/isEmpty';
 
 export default {
     name: 'settings-modal',
@@ -169,6 +170,7 @@ export default {
         ...mapState(['settings']),
         ...mapGetters({
             trans: 'settings/trans',
+            isAdmin: 'settings/isAdmin',
         }),
     },
 
@@ -201,6 +203,7 @@ export default {
             this.$emit('add-topic', topic);
             this.update();
         },
+        isEmpty,
 
         update: debounce(function () {
             this.$emit('update-post');

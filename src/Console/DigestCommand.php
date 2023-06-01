@@ -35,7 +35,7 @@ class DigestCommand extends Command
         $startDate = today()->subDays(7)->startOfDay();
         $endDate = today()->endOfDay();
 
-        $recipients = User::whereIn('id', Post::published()->pluck('blogger_id')->unique())->get();
+        $recipients = User::whereIn('id', Post::approved()->pluck('blogger_id')->unique())->get();
 
         foreach ($recipients as $user) {
             if ($user->digest != true) {
@@ -43,7 +43,7 @@ class DigestCommand extends Command
             }
 
             $posts = Post::where('blogger_id', $user->id)
-                         ->published()
+                         ->approved()
                          ->withCount(['views' => function (Builder $query) use ($startDate, $endDate) {
                              $query->whereBetween('created_at', [
                                  $startDate,

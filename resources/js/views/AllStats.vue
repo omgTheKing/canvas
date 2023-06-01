@@ -52,7 +52,7 @@
                                 <router-link
                                     :to="{
                                         name: 'post-stats',
-                                        params: { id: post.id },
+                                        params: { id: post.uuid },
                                     }"
                                     class="text-decoration-none"
                                 >

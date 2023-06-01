@@ -7,7 +7,6 @@ use Canvas\Models\Topic;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
-use Ramsey\Uuid\Uuid;
 
 class TopicController extends Controller
 {
@@ -34,7 +33,9 @@ class TopicController extends Controller
      */
     public function create(): JsonResponse
     {
-        return response()->json(Topic::query()->make(), 200);
+        return response()->json(Topic::query()->make([
+            'id' => rand(Topic::count() + 10, 200)
+        ]), 200);
     }
 
     /**
