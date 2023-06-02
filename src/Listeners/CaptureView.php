@@ -28,7 +28,10 @@ class CaptureView
             ];
 
             $event->post->views()->create($data);
-            $event->post->newModelQuery()->increment('view_count');
+            // Sitemap'i vs degistirmemesi icin updated_at'i ignore et
+            $event->post->timestamps = false;
+            $event->post->increment('view_count');
+            $event->post->save();
 
             $this->storeInSession($event->post);
         }
