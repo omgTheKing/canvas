@@ -132,7 +132,14 @@ class PostController extends Controller
         if (!empty($data['approved_at']) && !empty($post->approved_at)) {
             unset($data['approved_at']);
         }
-
+        $meta = $data['meta'] ?? [];
+        if (array_key_exists('title', $meta) && ($post->title !== $data['title'] || empty($meta['title']))) {
+            $meta['title'] = $data['title'];
+        }
+        if (array_key_exists('description', $meta) && ($post->summary !== $data['summary'] || empty($meta['description']))) {
+            $meta['description'] = $data['summary'];
+        }
+        $data['meta'] = $meta;
         $post->fill(array_merge($data, [
             'slug' => $slug
         ]));

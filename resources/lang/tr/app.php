@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'a_descriptive_summary' => 'Açıklayıcı bir özet ...',
+    'a_descriptive_summary' => 'Blog kartında açıklama yazısı',
     'a_unique_slug' => 'essiz-yol-adresi',
     'add_a_caption' => 'Resminiz için resim yazısı ekleyin',
     'add_a_new_tag' => 'Yeni bir etiket ekle',
@@ -29,7 +29,7 @@ return [
     'deleted_users_are_gone_forever' => 'Bu kullanıcıyı silmek istediğinizden emin misiniz? Bu eylem geri alınamaz.',
     'details' => 'ayrıntılar',
     'done' => 'Bitti',
-    'draft' => 'taslak',
+    'draft' => 'Taslak',
     'drafts' => 'Taslaklar',
     'drop_files_or_click_to_upload' => 'Dosyaları bırakın veya yüklemek için burayı tıklayın',
     'edit_post' => 'Gönderiyi düzenle',
@@ -39,7 +39,7 @@ return [
     'edit_user' => 'Kullanıcıyı düzenle',
     'editor' => 'Editör',
     'embed_content' => 'İçeriği Göm',
-    'featured_image' => 'Özellikli resim',
+    'featured_image' => 'Öne Çıkan Resim',
     'featured_image_caption' => 'Öne Çıkan Resim Başlığı',
     'from' => 'itibaren',
     'from_last_month' => 'geçen aydan',
