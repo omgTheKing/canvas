@@ -39,7 +39,7 @@
                         <router-link
                             :to="{
                                 name: entity.item.route,
-                                params: { id: entity.item.id },
+                                params: { id: entity.item.uuid || entity.item.id },
                             }"
                             class="text-decoration-none"
                             data-dismiss="modal"

@@ -106,12 +106,6 @@
                     </div>
                 </div>
             </div>
-
-            <div class="pt-5 d-flex justify-content-center">
-                <a :href="latestRelease.link" class="text-muted text-decoration-none">
-                    {{ latestRelease.tag }}
-                </a>
-            </div>
         </main>
     </section>
 </template>
@@ -147,13 +141,6 @@ export default {
         ...mapGetters({
             trans: 'settings/trans',
         }),
-
-        latestRelease() {
-            return {
-                tag: this.settings.version,
-                link: `https://github.com/austintoddj/canvas/releases/tag/${this.settings.version}`,
-            };
-        },
     },
 
     created() {

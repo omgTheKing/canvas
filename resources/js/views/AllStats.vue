@@ -15,7 +15,7 @@
                     <select
                         v-model="scope"
                         id="scope"
-                        v-if="isReady && isAdmin && hasPublishedPosts"
+                        v-if="isReady && (isAdmin || hasPublishedPosts)"
                         name="scope"
                         class="ml-auto w-auto custom-select border-0 bg-light"
                         @change="changeScope"
