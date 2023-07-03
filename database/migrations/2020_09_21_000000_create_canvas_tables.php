@@ -66,7 +66,6 @@ class CreateCanvasTables extends Migration
             $table->string('name');
             $table->string('banner')->nullable();
             $table->foreignId('blogger_id')->nullable()->constrained('blog_users')->nullOnDelete();
-            $table->foreignId('parent_id')->nullable()->constrained('blog_topics')->nullOnDelete();
             $table->boolean('is_active')->default(false);
             $table->integer('order')->default(0);
             $table->timestamps();
