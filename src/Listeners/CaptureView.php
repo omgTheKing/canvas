@@ -39,7 +39,7 @@ class CaptureView
 
     private function cacheKey(Post $post): string
     {
-        return 'canvas_post_view:'. md5(request()->ip() . $post->id);
+        return 'canvas_post_view:'. md5(request()->get('ip', request()->ip()) . $post->uuid);
     }
 
     /**
