@@ -94,6 +94,60 @@
                                                 {{ moment(post.updated_at).fromNow() }}
                                             </span>
                                         </p>
+                                        <hr />
+                                        <div class="row text-secondary my-1">
+                                            <div v-if="post.user" class="col-sm">
+                                                <p class="mb-0">Writer</p>
+                                                <router-link
+                                                    :to="{
+                                                        name: !isAdmin ? 'posts' : 'edit-user',
+                                                        params: { id: post.user.id },
+                                                    }"
+                                                >
+                                                    <img
+                                                        :src="post.user.avatar || post.user.default_avatar"
+                                                        class="mr-3 rounded-circle shadow-inner"
+                                                        style="width: 20px"
+                                                        :alt="post.user.name"
+                                                    />
+                                                    {{ post.user.name }}
+                                                </router-link>
+                                            </div>
+                                            <div v-if="post.approver" class="col-sm">
+                                                <p class="mb-0">Publisher</p>
+                                                <router-link
+                                                    :to="{
+                                                        name: !isAdmin ? 'posts' : 'edit-user',
+                                                        params: { id: post.approver.id },
+                                                    }"
+                                                >
+                                                    <img
+                                                        :src="post.approver.avatar || post.approver.default_avatar"
+                                                        class="mr-3 rounded-circle shadow-inner"
+                                                        style="width: 20px"
+                                                        :alt="post.approver.name"
+                                                    />
+                                                    {{ post.approver.name }}
+                                                </router-link>
+                                            </div>
+                                            <div v-if="post.reviewer" class="col-sm">
+                                                <p class="mb-0">Editor</p>
+                                                <router-link
+                                                    :to="{
+                                                        name: !isAdmin ? 'posts' : 'edit-user',
+                                                        params: { id: post.reviewer.id },
+                                                    }"
+                                                >
+                                                    <img
+                                                        :src="post.reviewer.avatar || post.reviewer.default_avatar"
+                                                        class="mr-3 rounded-circle shadow-inner"
+                                                        style="width: 20px"
+                                                        :alt="post.reviewer.name"
+                                                    />
+                                                    {{ post.reviewer.name }}
+                                                </router-link>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="ml-auto d-none d-md-inline pl-3">
                                         <div
@@ -199,6 +253,7 @@ export default {
     computed: {
         ...mapGetters({
             isContributor: 'settings/isContributor',
+            isAdmin: 'settings/isAdmin',
             trans: 'settings/trans',
         }),
     },

@@ -24,22 +24,30 @@ class PostController extends Controller
     public function index(): JsonResponse
     {
         $type = request()->query('type', 'approved');
+        $selectUser = fn($q) => $q->select('name', 'username', 'avatar', 'id');
         $posts = Post::query()
-                    ->select('id', 'uuid', 'title', 'summary', 'featured_image', 'published_at', 'created_at', 'updated_at', 'view_count')
-                     ->when(request()->user('canvas')->isContributor || request()->query('scope', 'user') != 'all', function (Builder $query) {
-                         return $query->where('blogger_id', request()->user('canvas')->id);
-                     })
-                     ->when($type == 'published', function (Builder $query) {
-                         return $query->published();
-                     })
-                    ->when($type == 'draft', function (Builder $query) {
-                        return $query->draft();
-                    })
-                    ->when($type == 'approved', function (Builder $query) {
-                        return $query->approved();
-                    })
-                     ->latest()
-                     ->paginate();
+            ->with([
+                'user' => $selectUser,
+                'approver' => $selectUser,
+                'reviewer' => $selectUser
+            ])
+            ->select('id', 'uuid', 'title', 'summary', 'featured_image', 'published_at',
+                'created_at', 'updated_at', 'view_count', 'blogger_id', 'approved_by', 'reviewed_by'
+            )
+            ->when(request()->user('canvas')->isContributor || request()->query('scope', 'user') != 'all', function (Builder $query) {
+                return $query->where('blogger_id', request()->user('canvas')->id);
+            })
+            ->when($type == 'published', function (Builder $query) {
+                return $query->published();
+            })
+            ->when($type == 'draft', function (Builder $query) {
+                return $query->draft();
+            })
+            ->when($type == 'approved', function (Builder $query) {
+                return $query->approved();
+            })
+            ->latest()
+            ->paginate();
 
         $basePostQuery =  Post::query()
             ->when(request()->user('canvas')->isContributor || request()->query('scope', 'user') != 'all', function (Builder $query) {
