@@ -6,7 +6,7 @@ $factory->define(\Canvas\Models\Post::class, function (Faker\Generator $faker) {
         'uuid' => $faker->uuid,
         'slug' => $faker->slug,
         'title' => $faker->word,
-        'summary' => $faker->sentence,
+        'summary' => mb_substr($faker->sentence, 0, 144),
         'body' => $faker->realText(),
         'published_at' => today()->toDateTimeString(),
         'featured_image' => null,

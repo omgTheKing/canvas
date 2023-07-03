@@ -23,9 +23,9 @@
                 <div class="modal-body">
                     <div class="form-group row" v-if="isEmpty(post.approved_at) || isAdmin">
                         <div class="col-12">
-                            <label for="slug" class="font-weight-bold text-uppercase text-muted small">{{
-                                trans.slug
-                            }}</label>
+                            <label for="slug" class="font-weight-bold text-uppercase text-muted small"
+                                >{{ trans.slug }} - max 100 characters</label
+                            >
                             <a
                                 v-tooltip="{ placement: 'right' }"
                                 v-if="post.title"
@@ -53,6 +53,7 @@
                                 type="text"
                                 class="form-control border-0"
                                 name="slug"
+                                maxlength="100"
                                 :title="trans.slug"
                                 :placeholder="trans.a_unique_slug"
                                 @input="update"
@@ -61,15 +62,17 @@
                     </div>
                     <div class="form-group row">
                         <div class="col-12">
-                            <label for="settings" class="font-weight-bold text-uppercase text-muted small">{{
-                                trans.summary
-                            }}</label>
+                            <label for="settings" class="font-weight-bold text-uppercase text-muted small"
+                                >{{ trans.summary }} - max 144 characters</label
+                            >
+
                             <textarea
                                 v-model="post.summary"
                                 id="settings"
                                 rows="4"
                                 name="summary"
                                 style="resize: none"
+                                maxlength="144"
                                 class="form-control resize-none border-0"
                                 :placeholder="trans.a_descriptive_summary"
                                 @input="update"

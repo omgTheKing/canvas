@@ -79,21 +79,6 @@
                                         <p v-if="post.summary" class="text-truncate text-secondary my-1">
                                             {{ post.summary }}
                                         </p>
-                                        <p class="text-secondary mt-1 mb-0">
-                                            <span v-if="isPublished(post.published_at)">
-                                                {{ trans.published }}
-                                                {{ moment(post.published_at).fromNow() }}
-                                            </span>
-
-                                            <span v-if="isDraft(post.published_at)" class="text-danger">{{
-                                                trans.draft
-                                            }}</span>
-
-                                            <span class="d-none d-md-inline">
-                                                ― {{ trans.updated }}
-                                                {{ moment(post.updated_at).fromNow() }}
-                                            </span>
-                                        </p>
                                         <hr />
                                         <div class="row text-secondary my-1">
                                             <div v-if="post.user" class="col-sm">
@@ -111,6 +96,9 @@
                                                         :alt="post.user.name"
                                                     />
                                                     {{ post.user.name }}
+                                                    <small class="text-secondary mb-0 text-xs">{{
+                                                        moment(post.created_at).fromNow()
+                                                    }}</small>
                                                 </router-link>
                                             </div>
                                             <div v-if="post.approver" class="col-sm">
@@ -128,6 +116,9 @@
                                                         :alt="post.approver.name"
                                                     />
                                                     {{ post.approver.name }}
+                                                    <small class="text-secondary mb-0 text-sm">{{
+                                                        moment(post.approved_at).fromNow()
+                                                    }}</small>
                                                 </router-link>
                                             </div>
                                             <div v-if="post.reviewer" class="col-sm">

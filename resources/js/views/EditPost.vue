@@ -277,7 +277,7 @@ export default {
             if (this.isDraft(this.post.published_at)) {
                 return 1;
             }
-            if (this.isPublished(this.post.published_at) && isEmpty(this.post.approved_at)) {
+            if (this.isPublished(this.post.published_at)) {
                 return 2;
             }
             return 3;

@@ -32,7 +32,8 @@ class PostController extends Controller
                 'reviewer' => $selectUser
             ])
             ->select('id', 'uuid', 'title', 'summary', 'featured_image', 'published_at',
-                'created_at', 'updated_at', 'view_count', 'blogger_id', 'approved_by', 'reviewed_by'
+                'created_at', 'updated_at', 'view_count', 'blogger_id', 'approved_by', 'reviewed_by',
+                'approved_at'
             )
             ->when(request()->user('canvas')->isContributor || request()->query('scope', 'user') != 'all', function (Builder $query) {
                 return $query->where('blogger_id', request()->user('canvas')->id);
@@ -46,7 +47,11 @@ class PostController extends Controller
             ->when($type == 'approved', function (Builder $query) {
                 return $query->approved();
             })
-            ->latest()
+            ->orderByDesc(match ($type) {
+                'published' => 'published_at',
+                'approved' => 'approved_at',
+                default => 'created_at',
+            })
             ->paginate();
 
         $basePostQuery =  Post::query()
@@ -112,8 +117,7 @@ class PostController extends Controller
         abort_if(!empty($post->approved_at) && $request->filled('approved_at') && !$user->isAdmin && $post?->blogger_id === $user->id, 403, 'users can\'t review their own posts');
         abort_if(!empty($post->published_at) && $request->filled('published_at') && $user->isContributor, 403, 'contributors can\'t update published posts');
 
-        $isReview = $post?->approved_at !== null;
-        if ($isReview) {
+        if ($post?->published_at !== null) {
             $oldPost = $post;
             $post = $oldPost->replicate();
             $post->reviewed_by = $user->id;
@@ -131,6 +135,7 @@ class PostController extends Controller
                 $slug .= '-' . rand(0, 9999);
             }
         }
+        $slug = mb_substr($slug, 0, 144);
 
         // published_at and approved_at being broke from client due timezone issue db <-> laravel <-> client
         // this is the easy way to fix. ignore new value if published_at already not empty
@@ -153,7 +158,7 @@ class PostController extends Controller
         ]));
 
         $post->blogger_id ??= $user->id;
-        if ($isReview) {
+        if ($post?->approved_at !== null) {
             $post->reviewed_by = $user->id;
         }
         $post->save();

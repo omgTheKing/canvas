@@ -39,12 +39,13 @@ class PostRequest extends FormRequest
             'slug' => [
                 'required',
                 'alpha_dash',
+                'max:100',
                 Rule::unique('blog_posts')->where(function ($query) {
                     return $query->where('slug', request('slug'))->where('blogger_id', request()->user('canvas')->id);
                 })->ignore(request('id'))->whereNull('deleted_at'),
             ],
             'title' => 'required',
-            'summary' => 'nullable|string',
+            'summary' => 'nullable|string|max:144',
             'body' => 'nullable|string',
             'published_at' => 'nullable|date',
             'approved_at' => 'nullable|date',
