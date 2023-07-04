@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class ChangeSummaryColumn extends Migration
+class ChangeSlugColumn extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,7 @@ class ChangeSummaryColumn extends Migration
     public function up()
     {
         Schema::table('blog_posts', function (Blueprint $table) {
-            $table->string('summary', 144)->change();
+            $table->string('slug', 100)->change();
         });
     }
 
@@ -26,7 +26,7 @@ class ChangeSummaryColumn extends Migration
     public function down()
     {
         Schema::table('blog_posts', function (Blueprint $table) {
-            $table->text('summary')->change();
+            $table->string('slug')->change();
         });
     }
 }
