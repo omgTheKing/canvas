@@ -14,7 +14,7 @@ class ChangeSlugColumn extends Migration
     public function up()
     {
         Schema::table('blog_posts', function (Blueprint $table) {
-            $table->string('slug', 100)->change();
+            $table->string('slug')->change();
         });
     }
 

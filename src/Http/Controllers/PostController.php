@@ -31,22 +31,15 @@ class PostController extends Controller
                 'approver' => $selectUser,
                 'reviewer' => $selectUser
             ])
-            ->select('id', 'uuid', 'title', 'summary', 'featured_image', 'published_at',
-                'created_at', 'updated_at', 'view_count', 'blogger_id', 'approved_by', 'reviewed_by',
-                'approved_at'
+            ->select('id', 'uuid', 'title', 'summary', 'featured_image', 'published_at', 'created_at',
+                'updated_at', 'view_count', 'blogger_id', 'approved_by', 'reviewed_by', 'approved_at'
             )
             ->when(request()->user('canvas')->isContributor || request()->query('scope', 'user') != 'all', function (Builder $query) {
                 return $query->where('blogger_id', request()->user('canvas')->id);
             })
-            ->when($type == 'published', function (Builder $query) {
-                return $query->published();
-            })
-            ->when($type == 'draft', function (Builder $query) {
-                return $query->draft();
-            })
-            ->when($type == 'approved', function (Builder $query) {
-                return $query->approved();
-            })
+            ->when($type == 'published', fn(Builder $query) => $query->published())
+            ->when($type == 'draft', fn(Builder $query) => $query->draft())
+            ->when($type == 'approved', fn(Builder $query) => $query->approved())
             ->orderByDesc(match ($type) {
                 'published' => 'published_at',
                 'approved' => 'approved_at',
