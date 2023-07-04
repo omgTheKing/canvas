@@ -13,7 +13,7 @@
                             <span v-if="isSaved" class="text-success">{{ trans.saved }}</span>
 
                             <span
-                                v-if="!editDisabled && isPublished(post.approved_at)"
+                                v-if="!editDisabled && isPublished(post.published_at)"
                                 class="btn btn-danger"
                                 @click="savePost(true)"
                                 >Kaydet</span
@@ -69,7 +69,11 @@
                             Yayına Sun
                         </a>
                         <a
-                            v-if="postStatus === 2 && (isAdmin || isEditor)"
+                            v-if="
+                                isPublished(post.published_at) &&
+                                isDraft(post.approved_at) &&
+                                (isAdmin || (isEditor && post.blogger_id != user.id))
+                            "
                             href="#"
                             class="dropdown-item"
                             @click="updateApprovedAt()"
@@ -120,7 +124,10 @@
                             style="cursor: pointer"
                             >Düzenleme kilidini aç</a
                         >
-                        <span v-else>Bu gönderiyi düzenleyemezsiniz!</span>
+                        <span v-else
+                            >Kendi gönderinizi yayına sunulduktan sonra düzenleyemezsiniz. Taslağa döndürüp tekrar
+                            deneyin.</span
+                        >
                     </div>
                 </div>
                 <div class="form-group my-3" v-if="!editDisabled">
@@ -330,7 +337,7 @@ export default {
 
                     this.tags = get(data, 'tags', []);
                     this.topics = get(data, 'topics', []);
-                    this.editDisabled = !!this.post.approved_at || (this.isContributor && !!this.post.published_at);
+                    this.editDisabled = !!this.post.published_at;
 
                     NProgress.inc();
                 })
@@ -348,8 +355,8 @@ export default {
 
         updatePublishedAt() {
             this.post.published_at = moment().utc().format('YYYY-MM-DD HH:mm:ss');
-            this.editDisabled = this.isContributor;
-            this.savePost();
+            this.editDisabled = true;
+            this.savePost(true);
         },
 
         async updateApprovedAt() {
@@ -402,7 +409,7 @@ export default {
         }, 3000),
 
         async savePost(force = false) {
-            if (!isEmpty(this.post.approved_at) && !force) {
+            if (!isEmpty(this.post.published_at) && !force) {
                 return;
             }
             this.errors = [];

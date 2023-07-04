@@ -69,6 +69,35 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="d-flex border-top p-3 align-items-center">
+                            <div class="mr-auto py-1">
+                                <p class="mb-1 lead font-weight-bold text-truncate">Discord ID</p>
+                                <p class="mb-1 d-none d-lg-block text-secondary">
+                                    Set your discord handle (eg: username#1234)
+                                </p>
+                            </div>
+                            <div class="ml-auto pl-3">
+                                <div class="align-middle">
+                                    <div class="form-group my-auto">
+                                        <input
+                                            v-model="settings.user.discord_handle"
+                                            id="discord_handle"
+                                            name="discord_handle"
+                                            type="text"
+                                            required
+                                            class="form-control border-0"
+                                        />
+                                        <button
+                                            v-if="isDirty"
+                                            v-on:click="updateDiscordHandle"
+                                            class="button form-control"
+                                        >
+                                            Save
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
                         <div class="d-flex border-top p-3 align-items-center">
                             <div class="mr-auto py-1">
@@ -133,6 +162,7 @@ export default {
             locale: null,
             darkMode: false,
             isReady: false,
+            initialDiscordHandle: '',
         };
     },
 
@@ -141,6 +171,9 @@ export default {
         ...mapGetters({
             trans: 'settings/trans',
         }),
+        isDirty() {
+            return this.settings.user.discord_handle !== this.initialDiscordHandle;
+        },
     },
 
     created() {
@@ -172,6 +205,17 @@ export default {
             }
         },
 
+        updateDiscordHandle() {
+            const user = this.settings.user;
+            const handle = user.discord_handle;
+            this.request().post(`/api/users/${user.id}`, {
+                discord_handle: handle,
+                name: user.name,
+                email: user.email,
+            });
+            this.initialDiscordHandle = handle;
+        },
+
         toggleDarkMode() {
             this.$store.dispatch('settings/updateDarkMode', this.darkMode);
 
@@ -181,6 +225,10 @@ export default {
                 document.body.removeAttribute('data-theme');
             }
         },
+    },
+    mounted() {
+        // Set the initial value of the input
+        this.initialDiscordHandle = this.settings.user.discord_handle;
     },
 };
 </script>

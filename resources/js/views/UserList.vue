@@ -33,6 +33,9 @@
                                     <div class="pl-2 col-md-8 col-sm-10 col-10 py-1">
                                         <p class="mb-0 lead font-weight-bold text-truncate">
                                             {{ user.name }}
+                                            <small v-if="user.discord_handle" class="text-secondary"
+                                                >- {{ user.discord_handle }}</small
+                                            >
                                         </p>
                                         <p class="mb-1 text-secondary">
                                             {{ user.email }}

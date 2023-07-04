@@ -101,8 +101,25 @@
                                                     }}</small>
                                                 </router-link>
                                             </div>
+                                            <div v-if="post.reviewer" class="col-sm">
+                                                <p class="mb-0">Reviewer</p>
+                                                <router-link
+                                                    :to="{
+                                                        name: !isAdmin ? 'posts' : 'edit-user',
+                                                        params: { id: post.reviewer.id },
+                                                    }"
+                                                >
+                                                    <img
+                                                        :src="post.reviewer.avatar || post.reviewer.default_avatar"
+                                                        class="mr-3 rounded-circle shadow-inner"
+                                                        style="width: 20px"
+                                                        :alt="post.reviewer.name"
+                                                    />
+                                                    {{ post.reviewer.name }}
+                                                </router-link>
+                                            </div>
                                             <div v-if="post.approver" class="col-sm">
-                                                <p class="mb-0">Publisher</p>
+                                                <p class="mb-0">Approver</p>
                                                 <router-link
                                                     :to="{
                                                         name: !isAdmin ? 'posts' : 'edit-user',
@@ -119,23 +136,6 @@
                                                     <small class="text-secondary mb-0 text-sm">{{
                                                         moment(post.approved_at).fromNow()
                                                     }}</small>
-                                                </router-link>
-                                            </div>
-                                            <div v-if="post.reviewer" class="col-sm">
-                                                <p class="mb-0">Editor</p>
-                                                <router-link
-                                                    :to="{
-                                                        name: !isAdmin ? 'posts' : 'edit-user',
-                                                        params: { id: post.reviewer.id },
-                                                    }"
-                                                >
-                                                    <img
-                                                        :src="post.reviewer.avatar || post.reviewer.default_avatar"
-                                                        class="mr-3 rounded-circle shadow-inner"
-                                                        style="width: 20px"
-                                                        :alt="post.reviewer.name"
-                                                    />
-                                                    {{ post.reviewer.name }}
                                                 </router-link>
                                             </div>
                                         </div>

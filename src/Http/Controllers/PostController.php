@@ -120,7 +120,9 @@ class PostController extends Controller
         if ($post?->published_at !== null) {
             $oldPost = $post;
             $post = $oldPost->replicate();
-            $post->reviewed_by = $user->id;
+            if ($oldPost->approved_at !== null) {
+                $post->reviewed_by = $user->id;
+            }
             abort_unless($post->push(), 500, 'push failed');
 
             $oldPost->delete();
@@ -158,9 +160,6 @@ class PostController extends Controller
         ]));
 
         $post->blogger_id ??= $user->id;
-        if ($post?->approved_at !== null) {
-            $post->reviewed_by = $user->id;
-        }
         $post->save();
 
         $tags = Tag::query()->get(['id', 'name', 'slug']);

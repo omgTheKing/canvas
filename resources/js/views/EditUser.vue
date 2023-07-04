@@ -154,6 +154,20 @@
                                 </span>
                             </div>
                             <div class="form-group row">
+                                <label for="discord_handle" class="font-weight-bold text-uppercase text-muted small">
+                                    Discord ID
+                                </label>
+                                <input
+                                    v-model="user.discord_handle"
+                                    id="discord_handle"
+                                    name="discord_handle"
+                                    type="text"
+                                    class="form-control border-0"
+                                    title="discord_handle"
+                                    placeholder="username#1234"
+                                />
+                            </div>
+                            <div class="form-group row">
                                 <label for="password" class="font-weight-bold text-uppercase text-muted small">
                                     Password
                                 </label>

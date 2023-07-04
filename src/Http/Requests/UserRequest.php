@@ -36,6 +36,7 @@ class UserRequest extends FormRequest
             'username' => 'nullable|alpha_dash|unique:blog_users,username,'.request('id'),
             'password' => 'sometimes|nullable|min:8|confirmed',
             'summary' => 'nullable|string',
+            'discord_handle' => 'nullable|string',
             'avatar' => 'nullable|string',
             'dark_mode' => 'nullable|bool',
             'digest' => 'nullable|bool',

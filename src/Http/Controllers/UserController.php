@@ -9,8 +9,6 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Hash;
-use Ramsey\Uuid\Uuid;
 
 class UserController extends Controller
 {
@@ -23,7 +21,7 @@ class UserController extends Controller
     {
         return response()->json(
             User::query()
-                ->select('id', 'name', 'email', 'avatar', 'role')
+                ->select('id', 'name', 'email', 'avatar', 'role', 'discord_handle')
                 ->latest()
                 ->withCount('posts')
                 ->paginate(), 200
