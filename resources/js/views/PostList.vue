@@ -47,9 +47,15 @@
                         class="ml-auto w-auto custom-select border-0"
                         @change="changeType"
                     >
-                        <option value="approved">Yayinlanan ({{ suffixedNumber(approvedCount) }})</option>
-                        <option value="published">Yayina sunulan ({{ suffixedNumber(publishedCount) }})</option>
-                        <option value="draft">{{ trans.draft }} ({{ suffixedNumber(draftCount) }})</option>
+                        <option value="approved">Yayında ({{ suffixedNumber(approvedCount) }})</option>
+                        <option value="published">Yayına Sunulan ({{ suffixedNumber(publishedCount) }})</option>
+                        <option value="my-draft">Tasklaklarım ({{ suffixedNumber(myDraftCount) }})</option>
+                        <option value="relevant-draft" v-if="isEditor || isAdmin">
+                            Alakalı Tasklaklar ({{ suffixedNumber(relevantDraftCount) }})
+                        </option>
+                        <option value="all-draft" v-if="isAdmin">
+                            Tüm Taslaklar ({{ suffixedNumber(allDraftCount) }})
+                        </option>
                     </select>
                 </div>
 
@@ -234,7 +240,9 @@ export default {
             posts: [],
             publishedCount: 0,
             approvedCount: 0,
-            draftCount: 0,
+            myDraftCount: 0,
+            relevantDraftCount: 0,
+            allDraftCount: 0,
             type: 'approved',
             infiniteId: +new Date(),
             isReady: false,
@@ -245,6 +253,7 @@ export default {
         ...mapGetters({
             isContributor: 'settings/isContributor',
             isAdmin: 'settings/isAdmin',
+            isEditor: 'settings/isEditor',
             trans: 'settings/trans',
         }),
     },
@@ -269,7 +278,9 @@ export default {
                     .then(({ data }) => {
                         this.publishedCount = data.publishedCount;
                         this.approvedCount = data.approvedCount;
-                        this.draftCount = data.draftCount;
+                        this.myDraftCount = data.myDraftCount;
+                        this.relevantDraftCount = data.relevantDraftCount;
+                        this.allDraftCount = data.allDraftCount;
 
                         if (!isEmpty(data) && !isEmpty(data.posts.data)) {
                             this.page += 1;

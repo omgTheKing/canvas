@@ -25,6 +25,7 @@ class PostController extends Controller
     {
         $type = request()->query('type', 'approved');
         $selectUser = fn($q) => $q->select('name', 'username', 'avatar', 'id');
+        $user = request()->user('canvas');
         $posts = Post::query()
             ->with([
                 'user' => $selectUser,
@@ -34,11 +35,20 @@ class PostController extends Controller
             ->select('id', 'uuid', 'title', 'summary', 'featured_image', 'published_at', 'created_at',
                 'updated_at', 'view_count', 'blogger_id', 'approved_by', 'reviewed_by', 'approved_at'
             )
-            ->when(request()->user('canvas')->isContributor || request()->query('scope', 'user') != 'all', function (Builder $query) {
-                return $query->where('blogger_id', request()->user('canvas')->id);
-            })
+            ->when(
+                $type !== 'relevant-draft' && ($type === 'my-draft' || $user->isContributor || request()->query('scope', 'user') != 'all'),
+                fn (Builder $query) => $query->where('blogger_id', $user->id)
+            )
             ->when($type == 'published', fn(Builder $query) => $query->published())
-            ->when($type == 'draft', fn(Builder $query) => $query->draft())
+            ->when(str_ends_with($type, 'draft'), fn(Builder $query) => $query->draft())
+            ->when($type === 'relevant-draft',
+                $relevantDraftFilter = fn(Builder $query) =>
+                    $query->where('blogger_id', '!=', $user->id)
+                        ->where(fn(Builder $query) =>
+                            $query->where('approved_by', $user->id)
+                                ->orWhere('reviewed_by', $user->id)
+                        )
+            )
             ->when($type == 'approved', fn(Builder $query) => $query->approved())
             ->orderByDesc(match ($type) {
                 'published' => 'published_at',
@@ -48,16 +58,20 @@ class PostController extends Controller
             ->paginate();
 
         $basePostQuery =  Post::query()
-            ->when(request()->user('canvas')->isContributor || request()->query('scope', 'user') != 'all', function (Builder $query) {
-                return $query->where('blogger_id', request()->user('canvas')->id);
+            ->when($type === 'my-draft' || $user->isContributor || request()->query('scope', 'user') != 'all', function (Builder $query) use($user) {
+                return $query->where('blogger_id', $user->id);
             });
-        $draftCount = $basePostQuery->clone()->draft()->count();
+        $myDraftCount = $basePostQuery->clone()->draft()->where('blogger_id', $user->id)->count();
+        $relevantDraftCount = $basePostQuery->clone()->draft()->when(true, $relevantDraftFilter)->count();
+        $allDraftCount = $basePostQuery->clone()->draft()->count();
         $publishedCount = $basePostQuery->clone()->published()->count();
         $approvedCount = $basePostQuery->clone()->approved()->count();
 
         return response()->json([
             'posts' => $posts,
-            'draftCount' => $draftCount,
+            'allDraftCount' => $allDraftCount,
+            'myDraftCount' => $myDraftCount,
+            'relevantDraftCount' => $relevantDraftCount,
             'publishedCount' => $publishedCount,
             'approvedCount' => $approvedCount,
         ], 200);
