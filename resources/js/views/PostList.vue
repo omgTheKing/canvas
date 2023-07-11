@@ -97,11 +97,12 @@
                                                 >
                                                     <img
                                                         :src="post.user.avatar || post.user.default_avatar"
-                                                        class="mr-3 rounded-circle shadow-inner"
+                                                        class="mr-1 rounded-circle shadow-inner"
                                                         style="width: 20px"
                                                         :alt="post.user.name"
                                                     />
                                                     {{ post.user.name }}
+                                                    <br />
                                                     <small class="text-secondary mb-0 text-xs">{{
                                                         moment(post.created_at).fromNow()
                                                     }}</small>
@@ -117,7 +118,7 @@
                                                 >
                                                     <img
                                                         :src="post.reviewer.avatar || post.reviewer.default_avatar"
-                                                        class="mr-3 rounded-circle shadow-inner"
+                                                        class="mr-1 rounded-circle shadow-inner"
                                                         style="width: 20px"
                                                         :alt="post.reviewer.name"
                                                     />
@@ -134,11 +135,12 @@
                                                 >
                                                     <img
                                                         :src="post.approver.avatar || post.approver.default_avatar"
-                                                        class="mr-3 rounded-circle shadow-inner"
+                                                        class="mr-1 rounded-circle shadow-inner"
                                                         style="width: 20px"
                                                         :alt="post.approver.name"
                                                     />
                                                     {{ post.approver.name }}
+                                                    <br />
                                                     <small class="text-secondary mb-0 text-sm">{{
                                                         moment(post.approved_at).fromNow()
                                                     }}</small>

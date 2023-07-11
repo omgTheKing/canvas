@@ -58,7 +58,7 @@ class PostController extends Controller
             ->paginate();
 
         $basePostQuery =  Post::query()
-            ->when($type === 'my-draft' || $user->isContributor || request()->query('scope', 'user') != 'all', function (Builder $query) use($user) {
+            ->when($user->isContributor || request()->query('scope', 'user') != 'all', function (Builder $query) use($user) {
                 return $query->where('blogger_id', $user->id);
             });
         $myDraftCount = $basePostQuery->clone()->draft()->where('blogger_id', $user->id)->count();
@@ -111,23 +111,27 @@ class PostController extends Controller
         $user = $request->user('canvas');
 
         $post = Post::query()
-                    ->when($user->isContributor, function (Builder $query) {
-                        return $query->where('blogger_id', request()->user('canvas')->id);
-                    }, function (Builder $query) {
-                        return $query;
+                    ->when($user->isContributor, function (Builder $query) use($user) {
+                        return $query->where('blogger_id', $user->id);
                     })
                     ->with('tags', 'topic')
                     ->where('uuid', $id)
                     ->first();
 
+
         abort_if(!empty($post->approved_at) && $user->isContributor && $post !== null, 403, 'Contributors can\'t update approved posts.');
         abort_if(!empty($post->approved_at) && $request->filled('approved_at') && !$user->isAdmin && $post?->blogger_id === $user->id, 403, 'users can\'t review their own posts');
         abort_if(!empty($post->published_at) && $request->filled('published_at') && $user->isContributor, 403, 'contributors can\'t update published posts');
 
+        // Post yayinlanmak uzere acildiktan sonra baska bir ekranda drafta cekilmis olabilir.
+        $isChanged = $request->get('id') != $post?->id;
+        abort_if($isChanged && empty($post->published_at) && $request->filled('approved_at'), 400, 'Gönderi yayınlanırken başkası tarafından taslağa çekilmiş, sayfayı yenileyip tekrar deneyiniz!');
+        abort_if($isChanged && !empty($post->approved_at) && !$request->filled('published_at'), 400, 'Gönderi taslağa çevirilirken başkası tarafından yayınlanmıştır, sayfayı yenileyip tekrar deneyiniz!');
+
         if ($post?->published_at !== null) {
             $oldPost = $post;
             $post = $oldPost->replicate();
-            if ($oldPost->approved_at !== null) {
+            if ($oldPost->blogger_id !== $user->id) {
                 $post->reviewed_by = $user->id;
             }
             abort_unless($post->push(), 500, 'push failed');
@@ -138,13 +142,14 @@ class PostController extends Controller
         }
 
         $slug = $data['slug'];
+        $slug = mb_substr($slug, 0, 100 - 4); // random number suffix
         if ($post->title !== $data['title'] || str_starts_with($data['slug'], 'post-')) {
             $slug = Str::slug($data['title']);
             if (Post::where('id', '!=', $post->id)->where('slug', $slug)->exists()) {
                 $slug .= '-' . rand(0, 9999);
             }
         }
-        $slug = mb_substr($slug, 0, 144);
+        $slug = mb_substr($slug, 0, 100);
 
         // published_at and approved_at being broke from client due timezone issue db <-> laravel <-> client
         // this is the easy way to fix. ignore new value if published_at already not empty

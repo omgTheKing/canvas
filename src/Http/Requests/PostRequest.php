@@ -41,10 +41,10 @@ class PostRequest extends FormRequest
                 'alpha_dash',
                 'max:100',
                 Rule::unique('blog_posts')->where(function ($query) {
-                    return $query->where('slug', request('slug'))->where('blogger_id', request()->user('canvas')->id);
-                })->ignore(request('id'))->whereNull('deleted_at'),
+                    return $query->where('slug', request('slug'))->where('blogger_id', request()->user('canvas')->id)->where('uuid', '!=', request('uuid'));
+                })->whereNull('deleted_at'),
             ],
-            'title' => 'required',
+            'title' => 'required|max:90',
             'summary' => 'nullable|string|max:144',
             'body' => 'nullable|string',
             'published_at' => 'nullable|date',

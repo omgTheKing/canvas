@@ -6,7 +6,10 @@
                     <li class="text-muted font-weight-bold">
                         <div class="border-left pl-3 d-flex align-items-center" style="gap: 10px">
                             <div v-if="!isSaving && !isSaved">
-                                <span v-if="isPublished(post.published_at)">{{ trans.published }}</span>
+                                <span v-if="isPublished(post.approved_at)">Yayında</span>
+                                <span v-if="!isPublished(post.approved_at) && isPublished(post.published_at)"
+                                    >Yayına sunuldu</span
+                                >
                                 <span v-if="isDraft(post.published_at)">{{ trans.draft }}</span>
                             </div>
                             <span v-if="isSaving">{{ trans.saving }}</span>
@@ -125,9 +128,14 @@
                             >Düzenleme kilidini aç</a
                         >
                         <span v-else
-                            >Kendi gönderinizi yayına sunulduktan sonra düzenleyemezsiniz. Taslağa döndürüp tekrar
-                            deneyin.</span
+                            >Kendi gönderinizi yayına sunulduktan/yayınlandıktan sonra düzenleyemezsiniz. Taslağa
+                            döndürüp tekrar deneyin.</span
                         >
+                    </div>
+                </div>
+                <div class="form-group my-3" v-if="!isEmpty(errors)">
+                    <div class="alert alert-danger w-100">
+                        <span>{{ errors[0] }}</span>
                     </div>
                 </div>
                 <div class="form-group my-3" v-if="!editDisabled">
@@ -137,6 +145,7 @@
                         style="font-size: 42px"
                         class="w-100 form-control-lg border-0 font-serif bg-transparent px-0"
                         rows="1"
+                        maxlength="90"
                         @input.native="updatePost"
                     />
                 </div>
@@ -432,11 +441,15 @@ export default {
                     this.$store.dispatch('search/buildIndex', true);
                 })
                 .catch((error) => {
-                    this.errors = error.response.data.errors;
+                    this.errors = error.response.data.errors || [error.response.data.message];
                 });
 
             if (isEmpty(this.errors) && this.creatingPost) {
                 await this.$router.push({ name: 'edit-post', params: { id: this.post.uuid } });
+                NProgress.done();
+            }
+            if (!isEmpty(this.errors) && !this.creatingPost) {
+                await this.fetchPost();
                 NProgress.done();
             }
 
@@ -480,6 +493,7 @@ export default {
         showDeleteModal() {
             $(this.$refs.deleteModal.$el).modal('show');
         },
+        isEmpty,
     },
 };
 </script>
