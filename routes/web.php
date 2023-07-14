@@ -40,7 +40,7 @@ Route::middleware([Authenticate::class])->group(function () {
             Route::get('{id}', 'PostController@show');
             Route::get('{id}/stats', 'PostController@stats');
             Route::post('{id}', 'PostController@store');
-            Route::delete('{id}', 'PostController@destroy');
+            Route::delete('{id}', 'PostController@destroy')->middleware([Admin::class]);;
         });
 
         // Tag routes...
@@ -50,7 +50,7 @@ Route::middleware([Authenticate::class])->group(function () {
             Route::get('{id}', 'TagController@show');
             Route::get('{id}/posts', 'TagController@posts');
             Route::post('{id}', 'TagController@store');
-            Route::delete('{id}', 'TagController@destroy');
+            Route::delete('{id}', 'TagController@destroy')->middleware([Admin::class]);;
         });
 
         // Topic routes...
@@ -60,7 +60,7 @@ Route::middleware([Authenticate::class])->group(function () {
             Route::get('{id}', 'TopicController@show');
             Route::get('{id}/posts', 'TopicController@posts');
             Route::post('{id}', 'TopicController@store');
-            Route::delete('{id}', 'TopicController@destroy');
+            Route::delete('{id}', 'TopicController@destroy')->middleware([Admin::class]);;
         });
 
         // User routes...

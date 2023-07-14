@@ -104,7 +104,7 @@
                             {{ trans.seo_settings }}
                         </a>
                         <a
-                            v-if="!creatingPost && (isEditor || isAdmin || !isPublished(post.published_at))"
+                            v-if="!creatingPost && (isAdmin || !isPublished(post.published_at))"
                             href="#"
                             class="dropdown-item text-danger"
                             @click="showDeleteModal"
